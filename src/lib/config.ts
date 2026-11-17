@@ -14,7 +14,10 @@ export const LIMITS = {
 };
 
 export const GEMINI = {
-  model: process.env.GEMINI_MODEL ?? "gemini-2.5-flash",
+  // gemini-2.5-flash returns 404 for new API keys (checked 2026-11-17).
+  model: process.env.GEMINI_MODEL ?? "gemini-3.8-flash",
+  /** Gemini 3.x thinking level: MINIMAL | LOW | MEDIUM | HIGH. Unset = model default. */
+  thinkingLevel: process.env.GEMINI_THINKING_LEVEL as "MINIMAL" | "LOW" | "MEDIUM" | "HIGH" | undefined,
   /** Frames per second sampled from the video. Gemini default is 1. */
   fps: Number(process.env.GEMINI_VIDEO_FPS ?? 1),
   /** "files" = Files API upload + wait for ACTIVE; "inline" = base64 in the request (small files only). */
@@ -27,13 +30,20 @@ export const GEMINI = {
 };
 
 /**
- * Paid-tier list prices, USD per 1M tokens.
- * Source: https://ai.google.dev/gemini-api/docs/pricing (values copied 2026-11-17, re-check before reporting).
- * Text, image and video input share one price; audio input is priced separately;
- * output price includes thinking tokens.
+ * Paid-tier list prices, USD per 1M tokens (standard tier, not batch).
+ * Text, image and video input share one price; audio input is priced separately
+ * where Google lists it; output price includes thinking tokens.
  * Free-tier usage is still costed at these prices: free credits are not zero operating cost.
+ *
+ * gemini-3.8-flash: $0.75 in / $3.75 out is a promotional rate through 2026-12-31;
+ * from 2027-01-01 it doubles to $1.50 / $7.50. A separate audio rate was not found,
+ * so audio is assumed to cost the same as other input. Re-check on
+ * https://ai.google.dev/gemini-api/docs/pricing before reporting.
+ * Other rows were copied from the same page during planning (2026-11-17).
  */
 export const PRICING: Record<string, { input: number; audioInput: number; output: number }> = {
+  "gemini-3.8-flash": { input: 0.75, audioInput: 0.75, output: 3.75 },
+  "gemini-3-flash": { input: 0.5, audioInput: 0.5, output: 3.0 },
   "gemini-3.1-flash-lite": { input: 0.25, audioInput: 0.5, output: 1.5 },
   "gemini-2.5-flash": { input: 0.3, audioInput: 1.0, output: 2.5 },
   "gemini-3.5-flash": { input: 1.5, audioInput: 1.5, output: 9.0 },

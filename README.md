@@ -60,7 +60,8 @@ Expected facts for each recording live in `expected/*.json` and were written bef
 ```bash
 npm run eval                    # every recording once
 npm run eval -- --runs 2        # stability check
-GEMINI_MODEL=gemini-3.5-flash npm run eval
+GEMINI_MODEL=gemini-3-flash npm run eval
+GEMINI_THINKING_LEVEL=LOW npm run eval
 ```
 
 The script sends each file through the same pipeline as the web app, then writes `results/<recording>.<model>.run<N>.json` and `results/summary-<model>.md` with facts found, timestamps within ±2 s, fabrications, attempts, time and cost.

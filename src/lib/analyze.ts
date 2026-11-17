@@ -1,4 +1,4 @@
-import { FileState, GoogleGenAI, type Content, type Part } from "@google/genai";
+import { FileState, GoogleGenAI, ThinkingLevel, type Content, type Part } from "@google/genai";
 import { GEMINI, LIMITS } from "./config";
 import { priceAttempts, readUsage, type AttemptUsage, type CostBreakdown } from "./cost";
 import { SYSTEM_PROMPT, retryPrompt, userPrompt } from "./report/prompt";
@@ -126,6 +126,7 @@ export async function analyzeVideo(input: AnalyzeInput): Promise<AnalyzeResult> 
           responseMimeType: "application/json",
           responseSchema: geminiReportSchema,
           ...(GEMINI.temperature != null ? { temperature: GEMINI.temperature } : {}),
+          ...(GEMINI.thinkingLevel ? { thinkingConfig: { thinkingLevel: ThinkingLevel[GEMINI.thinkingLevel] } } : {}),
         },
       });
       timings.generationMs += Math.round(performance.now() - t);
