@@ -26,6 +26,11 @@ export const GEMINI = {
   uploadMode: (process.env.GEMINI_UPLOAD_MODE ?? "files") as "files" | "inline",
   /** Inline requests are capped by the API; fall back to the Files API above this. */
   inlineMaxBytes: 15 * 1024 * 1024,
+  /** Tried in order when the main model stays overloaded (503/429) after transientRetries. Comma-separated. */
+  fallbackModels: (process.env.GEMINI_FALLBACK_MODELS ?? "").split(",").map((m) => m.trim()).filter(Boolean),
+  /** Retries of the same model on 429/500/503/504, with backoff. */
+  transientRetries: 3,
+  transientBackoffMs: [3_000, 8_000, 20_000],
   /** One extra attempt when the model returns JSON that fails validation. */
   maxRetries: 1,
   temperature: process.env.GEMINI_TEMPERATURE ? Number(process.env.GEMINI_TEMPERATURE) : undefined,

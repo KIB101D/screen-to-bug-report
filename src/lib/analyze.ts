@@ -1,10 +1,19 @@
-import { FileState, GoogleGenAI, ThinkingLevel, type Content, type Part } from "@google/genai";
+import {
+  ApiError,
+  FileState,
+  GoogleGenAI,
+  ThinkingLevel,
+  type Content,
+  type GenerateContentParameters,
+  type GenerateContentResponse,
+  type Part,
+} from "@google/genai";
 import { GEMINI, LIMITS } from "./config";
 import { priceAttempts, readUsage, type AttemptUsage, type CostBreakdown } from "./cost";
 import { SYSTEM_PROMPT, retryPrompt, userPrompt } from "./report/prompt";
 import { ReportSchema, checkAgainstDuration, geminiReportSchema, type Report } from "./report/schema";
 
-export type Stage = "uploading" | "processing" | "generating" | "retrying";
+export type Stage = "uploading" | "processing" | "generating" | "busy" | "retrying";
 
 export type AnalyzeInput = {
   data: Uint8Array;
@@ -21,6 +30,8 @@ export type AnalyzeMetrics = {
   sizeBytes: number;
   timings: { geminiUploadMs: number; geminiProcessingMs: number; generationMs: number; totalMs: number };
   attempts: number;
+  /** Calls that failed with 429/5xx and were retried or sent to a fallback model. */
+  transientErrors: number;
   /** Validator messages for every rejected attempt; shows what the retry fixed. */
   rejected: string[][];
   cost: CostBreakdown;
@@ -38,6 +49,42 @@ export class AnalyzeError extends Error {
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+const TRANSIENT = new Set([429, 500, 503, 504]);
+function isTransient(err: unknown) {
+  if (err instanceof ApiError) return TRANSIENT.has(err.status);
+  const msg = err instanceof Error ? err.message : String(err);
+  return /"code":\s*(429|500|503|504)|UNAVAILABLE|RESOURCE_EXHAUSTED|timed? ?out|aborted/i.test(msg);
+}
+
+/**
+ * generateContent with backoff on overload, then the fallback models in order.
+ * Returns the model that actually answered, so cost is priced correctly.
+ */
+async function generateResilient(
+  ai: GoogleGenAI,
+  params: Omit<GenerateContentParameters, "model">,
+  onBusy: () => void,
+  onTransient: () => void,
+): Promise<{ res: GenerateContentResponse; model: string }> {
+  let last: unknown;
+  for (const model of [GEMINI.model, ...GEMINI.fallbackModels]) {
+    for (let i = 0; i <= GEMINI.transientRetries; i++) {
+      try {
+        return { res: await ai.models.generateContent({ ...params, model }), model };
+      } catch (err) {
+        if (!isTransient(err)) throw err;
+        last = err;
+        onTransient();
+        if (i < GEMINI.transientRetries) {
+          onBusy();
+          await sleep(GEMINI.transientBackoffMs[i] ?? 20_000);
+        }
+      }
+    }
+  }
+  throw last;
+}
 
 export function validateReportText(text: string, durationSec?: number): { report: Report } | { problems: string[] } {
   let json: unknown;
@@ -65,16 +112,18 @@ export async function analyzeVideo(input: AnalyzeInput): Promise<AnalyzeResult> 
   const timings = { geminiUploadMs: 0, geminiProcessingMs: 0, generationMs: 0, totalMs: 0 };
   const usages: AttemptUsage[] = [];
   const rejected: string[][] = [];
+  let transientErrors = 0;
   const uploadMode = GEMINI.uploadMode === "inline" && input.data.byteLength <= GEMINI.inlineMaxBytes ? "inline" : "files";
   let uploadedName: string | undefined;
 
   const metrics = (): AnalyzeMetrics => ({
-    model: GEMINI.model,
+    model: usages.at(-1)?.model ?? GEMINI.model,
     uploadMode,
     fps: GEMINI.fps,
     sizeBytes: input.data.byteLength,
     timings: { ...timings, totalMs: Math.round(performance.now() - started) },
     attempts: usages.length,
+    transientErrors,
     rejected,
     cost: priceAttempts(GEMINI.model, usages),
   });
@@ -118,20 +167,24 @@ export async function analyzeVideo(input: AnalyzeInput): Promise<AnalyzeResult> 
     for (let attempt = 0; attempt <= GEMINI.maxRetries; attempt++) {
       input.onStage?.(attempt === 0 ? "generating" : "retrying");
       const t = performance.now();
-      const res = await ai.models.generateContent({
-        model: GEMINI.model,
-        contents,
-        config: {
-          httpOptions: { timeout: LIMITS.generationTimeoutMs },
-          systemInstruction: SYSTEM_PROMPT,
-          responseMimeType: "application/json",
-          responseSchema: geminiReportSchema,
-          ...(GEMINI.temperature != null ? { temperature: GEMINI.temperature } : {}),
-          ...(GEMINI.thinkingLevel ? { thinkingConfig: { thinkingLevel: ThinkingLevel[GEMINI.thinkingLevel] } } : {}),
+      const { res, model } = await generateResilient(
+        ai,
+        {
+          contents,
+          config: {
+            httpOptions: { timeout: LIMITS.generationTimeoutMs },
+            systemInstruction: SYSTEM_PROMPT,
+            responseMimeType: "application/json",
+            responseSchema: geminiReportSchema,
+            ...(GEMINI.temperature != null ? { temperature: GEMINI.temperature } : {}),
+            ...(GEMINI.thinkingLevel ? { thinkingConfig: { thinkingLevel: ThinkingLevel[GEMINI.thinkingLevel] } } : {}),
+          },
         },
-      });
+        () => input.onStage?.("busy"),
+        () => transientErrors++,
+      );
       timings.generationMs += Math.round(performance.now() - t);
-      usages.push(readUsage(res.usageMetadata));
+      usages.push(readUsage(model, res.usageMetadata));
 
       const text = res.text ?? "";
       const checked = validateReportText(text, input.durationSec);

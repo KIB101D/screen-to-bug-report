@@ -21,6 +21,7 @@ const STAGE_LABEL: Record<StageKey, string> = {
   uploading: "Sending video to Gemini",
   processing: "Gemini is processing the video",
   generating: "Generating the report",
+  busy: "Model is overloaded, waiting and retrying",
   retrying: "Output failed validation, retrying once",
 };
 

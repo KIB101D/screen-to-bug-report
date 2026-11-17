@@ -317,7 +317,10 @@ function Metrics({ metrics, timings }: { metrics: Metrics; timings: ClientTiming
       {metrics.blobDownloadMs > 0 && row("Server ← Blob download", formatMs(metrics.blobDownloadMs))}
       {metrics.uploadMode === "files" && row("Upload to Gemini Files API", formatMs(metrics.timings.geminiUploadMs))}
       {metrics.uploadMode === "files" && row("Gemini video processing", formatMs(metrics.timings.geminiProcessingMs))}
-      {row(`Generation (${metrics.attempts} attempt${metrics.attempts === 1 ? "" : "s"})`, formatMs(metrics.timings.generationMs))}
+      {row(
+        `Generation (${metrics.attempts} attempt${metrics.attempts === 1 ? "" : "s"}${metrics.transientErrors ? `, ${metrics.transientErrors} overload retries` : ""})`,
+        formatMs(metrics.timings.generationMs),
+      )}
       {row("Tokens in: video + text / audio", `${c.tokens.input.toLocaleString()} / ${c.tokens.audio.toLocaleString()}`)}
       {row("Tokens out: answer / thinking", `${c.tokens.output.toLocaleString()} / ${c.tokens.thoughts.toLocaleString()}`)}
       {c.priced &&

@@ -61,7 +61,7 @@ async function main() {
         totalMs += wallMs;
         n++;
         rows.push(
-          `| ${exp.recording} | ${run} | ${report.verdict} ${report.verdict === exp.verdict ? "✓" : "✗"} | ${cmp.factsHit}/${cmp.factsTotal} | ${cmp.timedHit}/${cmp.timedTotal} | ${cmp.fabrications.length} | ${metrics.attempts} | ${(wallMs / 1000).toFixed(1)} s | $${metrics.cost.totalUsd.toFixed(4)} |`,
+          `| ${exp.recording} | ${run} | ${report.verdict} ${report.verdict === exp.verdict ? "✓" : "✗"} | ${cmp.factsHit}/${cmp.factsTotal} | ${cmp.timedHit}/${cmp.timedTotal} | ${cmp.fabrications.length} | ${metrics.attempts}${metrics.transientErrors ? ` (+${metrics.transientErrors} busy)` : ""} | ${(wallMs / 1000).toFixed(1)} s | $${metrics.cost.totalUsd.toFixed(4)} |`,
         );
         detail.push(
           `### ${exp.recording} run ${run}`,
@@ -81,7 +81,7 @@ async function main() {
   }
 
   const summary = [
-    `# Eval: ${GEMINI.model}, ${GEMINI.fps} fps, upload=${GEMINI.uploadMode}`,
+    `# Eval: ${GEMINI.model}${GEMINI.fallbackModels.length ? ` (fallback ${GEMINI.fallbackModels.join(", ")})` : ""}, ${GEMINI.fps} fps, upload=${GEMINI.uploadMode}`,
     "",
     `Run at ${new Date().toISOString()}. Timestamps count as correct within ±2 s.`,
     "",
