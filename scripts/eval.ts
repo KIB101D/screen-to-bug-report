@@ -54,14 +54,14 @@ async function main() {
         });
         const wallMs = performance.now() - started;
         const cmp = compare(report, exp);
-        const base = `${path.parse(exp.recording).name}.${GEMINI.model}.run${run}`;
+        const base = `${path.parse(exp.recording).name}.${metrics.model.replace(/ \+ /g, "+")}.run${run}`;
         await writeFile(path.join("results", `${base}.json`), JSON.stringify({ report, metrics, comparison: cmp }, null, 2));
 
         totalCost += metrics.cost.totalUsd;
         totalMs += wallMs;
         n++;
         rows.push(
-          `| ${exp.recording} | ${run} | ${report.verdict} ${report.verdict === exp.verdict ? "✓" : "✗"} | ${cmp.factsHit}/${cmp.factsTotal} | ${cmp.timedHit}/${cmp.timedTotal} | ${cmp.fabrications.length} | ${metrics.attempts}${metrics.transientErrors ? ` (+${metrics.transientErrors} busy)` : ""} | ${(wallMs / 1000).toFixed(1)} s | $${metrics.cost.totalUsd.toFixed(4)} |`,
+          `| ${exp.recording} | ${run} | ${metrics.model} | ${report.verdict} ${report.verdict === exp.verdict ? "✓" : "✗"} | ${cmp.factsHit}/${cmp.factsTotal} | ${cmp.timedHit}/${cmp.timedTotal} | ${cmp.fabrications.length} | ${metrics.attempts}${metrics.transientErrors ? ` (+${metrics.transientErrors} busy)` : ""} | ${(wallMs / 1000).toFixed(1)} s | $${metrics.cost.totalUsd.toFixed(4)} |`,
         );
         detail.push(
           `### ${exp.recording} run ${run}`,
@@ -73,7 +73,7 @@ async function main() {
         console.log(`${cmp.factsHit}/${cmp.factsTotal} facts, ${(wallMs / 1000).toFixed(1)} s, $${metrics.cost.totalUsd.toFixed(4)}`);
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
-        rows.push(`| ${exp.recording} | ${run} | error | – | – | – | ${e instanceof AnalyzeError ? (e.metrics?.attempts ?? "–") : "–"} | – | – |`);
+        rows.push(`| ${exp.recording} | ${run} | – | error | – | – | – | ${e instanceof AnalyzeError ? (e.metrics?.attempts ?? "–") : "–"} | – | – |`);
         detail.push(`### ${exp.recording} run ${run}`, `- error: ${msg}`, "");
         console.log(`error: ${msg}`);
       }
@@ -85,8 +85,8 @@ async function main() {
     "",
     `Run at ${new Date().toISOString()}. Timestamps count as correct within ±2 s.`,
     "",
-    "| Recording | Run | Verdict | Facts | Timestamps ±2 s | Fabrications | Attempts | Time | Cost |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Recording | Run | Answered by | Verdict | Facts | Timestamps ±2 s | Fabrications | Attempts | Time | Cost |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...rows,
     "",
     n ? `Average: ${(totalMs / n / 1000).toFixed(1)} s and $${(totalCost / n).toFixed(4)} per recording (paid-tier list prices, retries included, hosting excluded).` : "",

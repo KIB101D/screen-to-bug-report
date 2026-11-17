@@ -28,9 +28,13 @@ export const GEMINI = {
   inlineMaxBytes: 15 * 1024 * 1024,
   /** Tried in order when the main model stays overloaded (503/429) after transientRetries. Comma-separated. */
   fallbackModels: (process.env.GEMINI_FALLBACK_MODELS ?? "").split(",").map((m) => m.trim()).filter(Boolean),
-  /** Retries of the same model on 429/500/503/504, with backoff. */
-  transientRetries: 3,
-  transientBackoffMs: [3_000, 8_000, 20_000],
+  /**
+   * Retries of the same model on 429/500/503/504 before moving to the next fallback.
+   * Kept low: when a model is overloaded, waiting on it cost 2-5 min per recording
+   * in the first eval run, while a fallback answers in seconds.
+   */
+  transientRetries: Number(process.env.GEMINI_TRANSIENT_RETRIES ?? 1),
+  transientBackoffMs: [4_000, 10_000, 20_000],
   /** One extra attempt when the model returns JSON that fails validation. */
   maxRetries: 1,
   temperature: process.env.GEMINI_TEMPERATURE ? Number(process.env.GEMINI_TEMPERATURE) : undefined,
