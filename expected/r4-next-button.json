@@ -1,0 +1,16 @@
+{
+  "recording": "r4-next-button.mov",
+  "scenario": "New input recorded after prompt tuning on R1-R3: on /demo the user selects Home and moves on with the 'Next →' button instead of a page number; the category resets to All. Narrated, expected behaviour stated.",
+  "verdict": "reproducible",
+  "steps": [
+    { "id": "select-home", "t": 4, "match": ["home"], "narrated": true },
+    { "id": "click-next", "t": 9, "match": ["/next|page 2|page two|second page|(page|button|number)[^,.;]{0,20}\\b2\\b/"], "narrated": true }
+  ],
+  "failure": { "t": 10, "match": ["all"] },
+  "claims": [
+    { "id": "jumped-back", "match": ["all|back|reset"], "supportedByVideo": "yes" }
+  ],
+  "expectedBehaviorStated": true,
+  "unknownsMustMention": [],
+  "forbidden": ["stack trace", "exception", "console", "root cause", "race condition", "caused by", "due to a", "not persisted", "useState"]
+}

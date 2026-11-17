@@ -45,3 +45,14 @@ Do not say what should happen in R2.
 | 11 | (still Home, of 7) | "And the filter reset to All again, same bug as before." |
 
 Do not say what should happen in R3.
+
+## R4 — new input after tuning (`/demo`)
+
+Recorded only after the prompt and settings were tuned on R1–R3, to check that the app handles input it has never seen. Write the expected file first, then run `npm run eval -- expected/r4-next-button.json`.
+
+| ~t | Do | Say |
+| --- | --- | --- |
+| 0 | Page loaded: All, page 1 | "Products page, nothing selected." |
+| 4 | Category → Home | "I switch to Home." |
+| 9 | Click **Next →** (not the number) | "And click next." |
+| 10 | (Category: All, of 30) | "It jumped back to all categories. Home should stay selected." |
