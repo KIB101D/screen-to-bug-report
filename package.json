@@ -1,5 +1,5 @@
 {
-  "name": "codebridge-bugreport",
+  "name": "screen-to-bug-report",
   "version": "0.1.0",
   "private": true,
   "scripts": {
