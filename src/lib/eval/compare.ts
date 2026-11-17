@@ -3,7 +3,8 @@ import type { Report } from "../report/schema";
 /**
  * Expected facts for one recording, written before the first analysis run.
  * `match` entries are keyword groups: every group must appear in the text,
- * and "a|b" inside a group means either word is fine. Case-insensitive.
+ * and "a|b" inside a group means either word is fine. A group written as
+ * "/.../" is a case-insensitive regular expression instead.
  */
 export type Expected = {
   recording: string;
@@ -36,7 +37,11 @@ const TOLERANCE_SEC = 2;
 
 export function matches(text: string, groups: string[]) {
   const t = text.toLowerCase();
-  return groups.every((g) => g.split("|").some((alt) => t.includes(alt.trim().toLowerCase())));
+  return groups.every((g) =>
+    g.length > 2 && g.startsWith("/") && g.endsWith("/")
+      ? new RegExp(g.slice(1, -1), "i").test(text)
+      : g.split("|").some((alt) => t.includes(alt.trim().toLowerCase())),
+  );
 }
 
 const fmt = (t: number) => `${t.toFixed(1)}s`;

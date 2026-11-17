@@ -15,7 +15,7 @@
       "id": "open-page-2",
       "t": 12.5,
       "match": [
-        "page 2|page two|second page"
+        "/(page|button|number)[^,.;]{0,20}\\b2\\b|second page|page two|next page/"
       ],
       "narrated": true
     }
