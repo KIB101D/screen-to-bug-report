@@ -50,7 +50,8 @@ export const GEMINI = {
  */
 export const PRICING: Record<string, { input: number; audioInput: number; output: number }> = {
   "gemini-3.8-flash": { input: 0.75, audioInput: 0.75, output: 3.75 },
-  "gemini-3-flash": { input: 0.5, audioInput: 0.5, output: 3.0 },
+  // Same rates as 3.8 Flash (3.8 is built on 3.7), same promo terms.
+  "gemini-3.7-flash": { input: 0.75, audioInput: 0.75, output: 3.75 },
   "gemini-3.1-flash-lite": { input: 0.25, audioInput: 0.5, output: 1.5 },
   "gemini-2.5-flash": { input: 0.3, audioInput: 1.0, output: 2.5 },
   "gemini-3.5-flash": { input: 1.5, audioInput: 1.5, output: 9.0 },
