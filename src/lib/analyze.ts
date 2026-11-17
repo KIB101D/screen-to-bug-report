@@ -122,6 +122,7 @@ export async function analyzeVideo(input: AnalyzeInput): Promise<AnalyzeResult> 
         model: GEMINI.model,
         contents,
         config: {
+          httpOptions: { timeout: LIMITS.generationTimeoutMs },
           systemInstruction: SYSTEM_PROMPT,
           responseMimeType: "application/json",
           responseSchema: geminiReportSchema,

@@ -45,7 +45,13 @@ async function main() {
       process.stdout.write(`${exp.recording} run ${run}/${runs} … `);
       const started = performance.now();
       try {
-        const { report, metrics } = await analyzeVideo({ data, mimeType, durationSec, displayName: exp.recording });
+        const { report, metrics } = await analyzeVideo({
+          data,
+          mimeType,
+          durationSec,
+          displayName: exp.recording,
+          onStage: (stage) => process.stdout.write(`${stage} (+${((performance.now() - started) / 1000).toFixed(0)} s) … `),
+        });
         const wallMs = performance.now() - started;
         const cmp = compare(report, exp);
         const base = `${path.parse(exp.recording).name}.${GEMINI.model}.run${run}`;
