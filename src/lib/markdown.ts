@@ -6,7 +6,8 @@ const SOURCE: Record<string, string> = { visible: "on screen", claimed: "speaker
 export function reportToMarkdown(r: Report, recordingName?: string) {
   const at = (t: number) => `\`${formatTime(t)}\``;
   const lines: string[] = [];
-  lines.push(`# ${r.title}`, "");
+  // The title describes the symptom; when the screen does not show it, it is only the speaker's claim.
+  lines.push(`# ${r.verdict === "reproducible" ? "" : "Claimed: "}${r.title}`, "");
   if (recordingName) lines.push(`Recording: ${recordingName}  `);
   lines.push(`Verdict: **${r.verdict}**`, "");
 

@@ -12,10 +12,6 @@ Upload a screen recording of a broken flow (MP4/MOV/WebM, up to 90 s, one browse
 
 `/demo` is a small store with a real defect: pick a category, change page, and the category resets to All. `/demo?fixed=1` is the same page without the defect.
 
-## Try it
-
-Open the app, then either drop your own recording or press one of the test-set buttons (R1–R4). Samples are sent through the same live pipeline as any upload; nothing is cached.
-
 ## Results
 
 Expected facts were written to `expected/*.json` before the first run. Final configuration: `gemini-3.5-flash-lite`, 1 fps, high media resolution.
@@ -68,7 +64,7 @@ npm run models                  # models your key can call
 1. Import the repository in Vercel.
 2. Storage → create a Blob store and connect it to the project (adds `BLOB_READ_WRITE_TOKEN`). If the store is private, also set `BLOB_ACCESS=private` and `NEXT_PUBLIC_BLOB_ACCESS=private`.
 3. Settings → Environment Variables → `GEMINI_API_KEY`.
-4. Deploy. `/api/analyze` sets `maxDuration = 300`; the build copies `recordings/` to `public/samples/` for the sample buttons.
+4. Deploy. `/api/analyze` sets `maxDuration = 300`.
 
 Uploaded recordings are deleted from Blob and from the Gemini Files API right after analysis.
 
