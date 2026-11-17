@@ -1,0 +1,145 @@
+{
+  "report": {
+    "title": "Category filter resets to All when paginating",
+    "startingConditions": [
+      {
+        "fact": "On the products page of Acme Store",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Acme Store demo v1.4.2 is displayed",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Category is set to All and page 2 is selected",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Open category dropdown",
+        "t": 3,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Select Home category",
+        "t": 6,
+        "source": "visible",
+        "narrated": true,
+        "note": null
+      },
+      {
+        "n": 3,
+        "action": "Click Next",
+        "t": 8,
+        "source": "visible",
+        "narrated": true,
+        "note": null
+      }
+    ],
+    "observedFailure": {
+      "description": "Category selection resets from Home to All and page changes when clicking pagination",
+      "evidence": "Category: Home - Showing 1–5 of 7 → Category: All - Showing 6–10 of 30",
+      "t": 9,
+      "visible": true
+    },
+    "claims": [
+      {
+        "text": "It jumped back to all categories, home should stay selected",
+        "t": 11,
+        "supportedByVideo": "yes"
+      }
+    ],
+    "expectedBehavior": {
+      "stated": true,
+      "text": "home should stay selected",
+      "t": 11
+    },
+    "unknowns": [],
+    "verdict": "reproducible"
+  },
+  "metrics": {
+    "model": "gemini-3.5-flash-lite",
+    "primaryModel": "gemini-3.5-flash-lite",
+    "uploadMode": "files",
+    "fps": 1,
+    "mediaResolution": "HIGH",
+    "sizeBytes": 739593,
+    "timings": {
+      "geminiUploadMs": 2481,
+      "geminiProcessingMs": 2324,
+      "generationMs": 32712,
+      "totalMs": 37526
+    },
+    "attempts": 1,
+    "transientErrors": 0,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-3.5-flash-lite",
+      "priced": true,
+      "inputUsd": 0.0015993,
+      "audioUsd": 0,
+      "outputUsd": 0.0012425000000000001,
+      "totalUsd": 0.0028418000000000002,
+      "tokens": {
+        "input": 5331,
+        "audio": 0,
+        "output": 497,
+        "thoughts": 0
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:select-home",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#2 at 6.0s (exp 6.0s)"
+      },
+      {
+        "fact": "step:click-next",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#3 at 8.0s (exp 8.5s)"
+      },
+      {
+        "fact": "failure",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "9.0s (exp 9.0s): Category selection resets from Home to All and page changes when clicking pagination"
+      },
+      {
+        "fact": "claim:jumped-back",
+        "ok": true,
+        "detail": "“It jumped back to all categories, home should stay selected” supported=yes (exp yes)"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=true"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "reproducible (exp reproducible)"
+      }
+    ],
+    "factsHit": 6,
+    "factsTotal": 6,
+    "timedHit": 3,
+    "timedTotal": 3,
+    "fabrications": [],
+    "extraSteps": 1
+  }
+}
