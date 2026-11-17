@@ -38,15 +38,16 @@ export const GEMINI = {
   uploadMode: (process.env.GEMINI_UPLOAD_MODE ?? "files") as "files" | "inline",
   /** Inline requests are capped by the API; fall back to the Files API above this. */
   inlineMaxBytes: 15 * 1024 * 1024,
-  /** Tried in order when the main model stays overloaded (503/429) after transientRetries. Comma-separated. */
-  fallbackModels: (process.env.GEMINI_FALLBACK_MODELS ?? "gemini-3.1-flash-lite").split(",").map((m) => m.trim()).filter(Boolean),
   /**
-   * Retries of the same model on 429/500/503/504 before moving to the next fallback.
-   * Kept low: when a model is overloaded, waiting on it cost 2-5 min per recording
-   * in the first eval run, while a fallback answers in seconds.
+   * Tried in order when the main model stays overloaded. Empty by default: in eval,
+   * gemini-3.1-flash-lite invented a visible failure in R3 and copied misspoken values
+   * from the narration, so a fast wrong report was judged worse than a short wait.
+   * Opt in with GEMINI_FALLBACK_MODELS=gemini-3.1-flash-lite (the UI then warns).
    */
-  transientRetries: Number(process.env.GEMINI_TRANSIENT_RETRIES ?? 1),
-  transientBackoffMs: [4_000, 10_000, 20_000],
+  fallbackModels: (process.env.GEMINI_FALLBACK_MODELS ?? "").split(",").map((m) => m.trim()).filter(Boolean),
+  /** Retries of the same model on 429/500/503/504; 3.5 Flash-Lite usually recovers within ~20 s. */
+  transientRetries: Number(process.env.GEMINI_TRANSIENT_RETRIES ?? 3),
+  transientBackoffMs: [4_000, 8_000, 15_000],
   /** One extra attempt when the model returns JSON that fails validation. */
   maxRetries: 1,
   temperature: process.env.GEMINI_TEMPERATURE ? Number(process.env.GEMINI_TEMPERATURE) : undefined,

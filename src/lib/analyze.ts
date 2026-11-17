@@ -26,6 +26,8 @@ export type AnalyzeInput = {
 
 export type AnalyzeMetrics = {
   model: string;
+  /** The configured main model; differs from `model` when a fallback answered. */
+  primaryModel: string;
   uploadMode: "files" | "inline";
   fps: number;
   mediaResolution: string;
@@ -120,6 +122,7 @@ export async function analyzeVideo(input: AnalyzeInput): Promise<AnalyzeResult> 
 
   const metrics = (): AnalyzeMetrics => ({
     model: usages.at(-1)?.model ?? GEMINI.model,
+    primaryModel: GEMINI.model,
     uploadMode,
     fps: GEMINI.fps,
     mediaResolution: GEMINI.mediaResolution,

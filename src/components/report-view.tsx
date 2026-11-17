@@ -127,6 +127,12 @@ export function ReportView({
             <span className="text-xs text-zinc-500">{verdict.hint}</span>
           </div>
           <h2 className="text-lg font-semibold">{report.title}</h2>
+          {metrics.primaryModel && metrics.model !== metrics.primaryModel && (
+            <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+              Answered by the fallback model {metrics.model} because {metrics.primaryModel} was overloaded. The fallback
+              scored lower in evaluation, so double-check steps and the failure against the video.
+            </p>
+          )}
           <div className="flex gap-2">
             <button
               type="button"
