@@ -1,0 +1,153 @@
+{
+  "report": {
+    "title": "Category filter resets after changing page in search results",
+    "startingConditions": [
+      {
+        "fact": "Browser is open at http://localhost:3000/demo displaying Acme Store Products page with Category set to All",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "App version is Acme Store demo v1.4.2",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Types lamp into Search products field",
+        "t": 5,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Selects Electronics category from Category dropdown",
+        "t": 9,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 3,
+        "action": "Clicks pagination page 2",
+        "t": 12.1,
+        "source": "visible",
+        "narrated": true,
+        "note": null
+      }
+    ],
+    "observedFailure": {
+      "description": "Category selection resets from Electronics back to All when navigating to page 2",
+      "evidence": "Category: Electronics Search: \"lamp\" → Category: All Search: \"lamp\"",
+      "t": 12.1,
+      "visible": true
+    },
+    "claims": [
+      {
+        "text": "page 2",
+        "t": 11.9,
+        "supportedByVideo": "yes"
+      }
+    ],
+    "expectedBehavior": {
+      "stated": false,
+      "text": null,
+      "t": null
+    },
+    "unknowns": [
+      "Expected behaviour is not stated in the recording"
+    ],
+    "verdict": "reproducible"
+  },
+  "metrics": {
+    "model": "gemini-3.5-flash-lite",
+    "uploadMode": "files",
+    "fps": 1,
+    "mediaResolution": "HIGH",
+    "sizeBytes": 823810,
+    "timings": {
+      "geminiUploadMs": 2619,
+      "geminiProcessingMs": 2293,
+      "generationMs": 2705,
+      "totalMs": 7618
+    },
+    "attempts": 1,
+    "transientErrors": 0,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-3.5-flash-lite",
+      "priced": true,
+      "inputUsd": 0.0013767,
+      "audioUsd": 0,
+      "outputUsd": 0.00121,
+      "totalUsd": 0.0025867,
+      "tokens": {
+        "input": 4589,
+        "audio": 0,
+        "output": 484,
+        "thoughts": 0
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:search-lamp",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#1 at 5.0s (exp 5.5s)"
+      },
+      {
+        "fact": "step:select-electronics",
+        "ok": false,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#2 at 9.0s (exp 9.5s); narrated=false, expected true"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": false,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#3 at 12.1s (exp 12.5s); missing correction note"
+      },
+      {
+        "fact": "failure",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "12.1s (exp 13.0s): Category selection resets from Electronics back to All when navigating to page 2"
+      },
+      {
+        "fact": "claim:category-dropped",
+        "ok": false,
+        "detail": "not found"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=false"
+      },
+      {
+        "fact": "unknown:expected",
+        "ok": true,
+        "detail": "listed"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "reproducible (exp reproducible)"
+      }
+    ],
+    "factsHit": 5,
+    "factsTotal": 8,
+    "timedHit": 4,
+    "timedTotal": 4,
+    "fabrications": [],
+    "extraSteps": 0
+  }
+}

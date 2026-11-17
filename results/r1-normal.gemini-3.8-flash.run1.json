@@ -1,0 +1,126 @@
+{
+  "report": {
+    "title": "Category filter resets upon changing page",
+    "startingConditions": [
+      {
+        "fact": "Acme Store demo v1.4.2 home page is loaded",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Selects category 'Electronics' from the category dropdown",
+        "t": 4.6,
+        "source": "visible",
+        "narrated": true,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Clicks on page number 2",
+        "t": 14.2,
+        "source": "visible",
+        "narrated": true,
+        "note": null
+      }
+    ],
+    "observedFailure": {
+      "description": "Category filter changes from 'Electronics' back to 'All' after navigating to the next page",
+      "t": 15.1,
+      "visible": true
+    },
+    "claims": [
+      {
+        "text": "It should stay on electronic.",
+        "t": 16.5,
+        "supportedByVideo": "yes"
+      }
+    ],
+    "expectedBehavior": {
+      "stated": true,
+      "text": "The category filter should remain set to Electronics after clicking the next page.",
+      "t": 16.5
+    },
+    "unknowns": [
+      "The application URL is not visible."
+    ],
+    "verdict": "reproducible"
+  },
+  "metrics": {
+    "model": "gemini-3.1-flash-lite",
+    "uploadMode": "files",
+    "fps": 1,
+    "sizeBytes": 906917,
+    "timings": {
+      "geminiUploadMs": 2343,
+      "geminiProcessingMs": 2311,
+      "generationMs": 298953,
+      "totalMs": 303615
+    },
+    "attempts": 1,
+    "transientErrors": 8,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-3.1-flash-lite",
+      "priced": true,
+      "inputUsd": 0.00059925,
+      "audioUsd": 0,
+      "outputUsd": 0.000567,
+      "totalUsd": 0.00116625,
+      "tokens": {
+        "input": 2397,
+        "audio": 0,
+        "output": 378,
+        "thoughts": 0
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:select-electronics",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#1 at 4.6s (exp 6.0s)"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": false,
+        "detail": "not found",
+        "timed": true,
+        "timeOk": false
+      },
+      {
+        "fact": "failure",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "15.1s (exp 15.0s): Category filter changes from 'Electronics' back to 'All' after navigating to the next page"
+      },
+      {
+        "fact": "claim:category-reset",
+        "ok": false,
+        "detail": "not found"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=true"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "reproducible (exp reproducible)"
+      }
+    ],
+    "factsHit": 4,
+    "factsTotal": 6,
+    "timedHit": 2,
+    "timedTotal": 3,
+    "fabrications": [],
+    "extraSteps": 1
+  }
+}

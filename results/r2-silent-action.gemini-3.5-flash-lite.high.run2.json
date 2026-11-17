@@ -1,0 +1,161 @@
+{
+  "report": {
+    "title": "Category filter resets after changing page in search results",
+    "startingConditions": [
+      {
+        "fact": "Acme Store Products page is open at http://localhost:3000/demo with Category set to All and search input empty",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Acme Store demo v1.4.2 is visible",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Types \"lamp\" into the Search products input",
+        "t": 2.4,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Clicks Category dropdown",
+        "t": 7.4,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 3,
+        "action": "Selects Electronics from Category dropdown",
+        "t": 9.2,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 4,
+        "action": "Clicks page 2 pagination button",
+        "t": 11.8,
+        "source": "visible",
+        "narrated": true,
+        "note": null
+      }
+    ],
+    "observedFailure": {
+      "description": "Category selection resets to All when clicking page 2 in search results",
+      "evidence": "Category: Electronics Search: \"lamp\" • Showing 1–5 of 7, URL: http://localhost:3000/demo?category=Electronics&q=lamp → Category: All Search: \"lamp\" • Showing 6–10 of 11, URL: http://localhost:3000/demo?q=lamp&page=2",
+      "t": 11.8,
+      "visible": true
+    },
+    "claims": [
+      {
+        "text": "page 2",
+        "t": 11.5,
+        "supportedByVideo": "yes"
+      }
+    ],
+    "expectedBehavior": {
+      "stated": false,
+      "text": null,
+      "t": null
+    },
+    "unknowns": [
+      "Expected behaviour is not stated in the recording"
+    ],
+    "verdict": "reproducible"
+  },
+  "metrics": {
+    "model": "gemini-3.5-flash-lite",
+    "uploadMode": "files",
+    "fps": 1,
+    "mediaResolution": "HIGH",
+    "sizeBytes": 823810,
+    "timings": {
+      "geminiUploadMs": 2546,
+      "geminiProcessingMs": 2413,
+      "generationMs": 3426,
+      "totalMs": 8386
+    },
+    "attempts": 1,
+    "transientErrors": 0,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-3.5-flash-lite",
+      "priced": true,
+      "inputUsd": 0.0013767,
+      "audioUsd": 0,
+      "outputUsd": 0.0015300000000000001,
+      "totalUsd": 0.0029067,
+      "tokens": {
+        "input": 4589,
+        "audio": 0,
+        "output": 612,
+        "thoughts": 0
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:search-lamp",
+        "ok": true,
+        "timed": true,
+        "timeOk": false,
+        "detail": "#1 at 2.4s (exp 5.5s)"
+      },
+      {
+        "fact": "step:select-electronics",
+        "ok": false,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#3 at 9.2s (exp 9.5s); narrated=false, expected true"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": false,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#4 at 11.8s (exp 12.5s); missing correction note"
+      },
+      {
+        "fact": "failure",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "11.8s (exp 13.0s): Category selection resets to All when clicking page 2 in search results"
+      },
+      {
+        "fact": "claim:category-dropped",
+        "ok": false,
+        "detail": "not found"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=false"
+      },
+      {
+        "fact": "unknown:expected",
+        "ok": true,
+        "detail": "listed"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "reproducible (exp reproducible)"
+      }
+    ],
+    "factsHit": 5,
+    "factsTotal": 8,
+    "timedHit": 3,
+    "timedTotal": 4,
+    "fabrications": [],
+    "extraSteps": 1
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "report": {
+    "title": "Category filter resets to All when navigating to another page",
+    "startingConditions": [
+      {
+        "fact": "Acme Store demo v1.4.2 product listing page is open at http://localhost:3000/demo",
+        "source": "both",
+        "t": 0
+      },
+      {
+        "fact": "Category filter is set to All",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Clicks category dropdown and selects Electronics",
+        "t": 6.3,
+        "source": "both",
+        "narrated": true,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Clicks page number 2",
+        "t": 13.9,
+        "source": "both",
+        "narrated": true,
+        "note": null
+      }
+    ],
+    "observedFailure": {
+      "description": "Category filter resets to All and pagination resets to All products when clicking page 2 while Electronics category is selected",
+      "evidence": "Category: Electronics → Category: All",
+      "t": 13.9,
+      "visible": true
+    },
+    "claims": [
+      {
+        "text": "If you go to page number 2, it should stay on electronics",
+        "t": 11.2,
+        "supportedByVideo": "no"
+      }
+    ],
+    "expectedBehavior": {
+      "stated": true,
+      "text": "It should stay on electronics",
+      "t": 16.9
+    },
+    "unknowns": [],
+    "verdict": "reproducible"
+  },
+  "metrics": {
+    "model": "gemini-3.5-flash-lite",
+    "uploadMode": "files",
+    "fps": 1,
+    "mediaResolution": "HIGH",
+    "sizeBytes": 906917,
+    "timings": {
+      "geminiUploadMs": 3152,
+      "geminiProcessingMs": 2349,
+      "generationMs": 3017,
+      "totalMs": 8519
+    },
+    "attempts": 1,
+    "transientErrors": 0,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-3.5-flash-lite",
+      "priced": true,
+      "inputUsd": 0.0019473,
+      "audioUsd": 0,
+      "outputUsd": 0.00107,
+      "totalUsd": 0.0030172999999999997,
+      "tokens": {
+        "input": 6491,
+        "audio": 0,
+        "output": 428,
+        "thoughts": 0
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:select-electronics",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#1 at 6.3s (exp 6.0s)"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#2 at 13.9s (exp 14.5s)"
+      },
+      {
+        "fact": "failure",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "13.9s (exp 15.0s): Category filter resets to All and pagination resets to All products when clicking page 2 while Electronics category is selected"
+      },
+      {
+        "fact": "claim:category-reset",
+        "ok": false,
+        "detail": "not found"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=true"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "reproducible (exp reproducible)"
+      }
+    ],
+    "factsHit": 5,
+    "factsTotal": 6,
+    "timedHit": 3,
+    "timedTotal": 3,
+    "fabrications": [],
+    "extraSteps": 0
+  }
+}

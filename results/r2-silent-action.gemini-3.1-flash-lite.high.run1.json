@@ -1,0 +1,148 @@
+{
+  "report": {
+    "title": "Search filter ignored when navigating to the next page",
+    "startingConditions": [
+      {
+        "fact": "Acme Store demo page, version 1.4.2",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Types 'lamp' into the search bar",
+        "t": 2.5,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Selects 'Electronics' from the Category dropdown menu",
+        "t": 8.5,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 3,
+        "action": "Clicks the number '3' to go to page 3 of the search results",
+        "t": 11.8,
+        "source": "visible",
+        "narrated": true,
+        "note": "The speaker says '3' but clicks the page '2' button instead."
+      }
+    ],
+    "observedFailure": {
+      "description": "After clicking the page 2 button, the category filter automatically resets from 'Electronics' to 'All', broadening the search results.",
+      "evidence": "Category: Electronics → Category: All",
+      "t": 12,
+      "visible": true
+    },
+    "claims": [
+      {
+        "text": "The app navigates to page 3 when clicked",
+        "t": 12,
+        "supportedByVideo": "no"
+      }
+    ],
+    "expectedBehavior": {
+      "stated": false,
+      "text": null,
+      "t": null
+    },
+    "unknowns": [
+      "Expected behaviour is not stated in the recording"
+    ],
+    "verdict": "reproducible"
+  },
+  "metrics": {
+    "model": "gemini-3.1-flash-lite",
+    "uploadMode": "files",
+    "fps": 1,
+    "mediaResolution": "HIGH",
+    "sizeBytes": 823810,
+    "timings": {
+      "geminiUploadMs": 2302,
+      "geminiProcessingMs": 2348,
+      "generationMs": 3218,
+      "totalMs": 7868
+    },
+    "attempts": 1,
+    "transientErrors": 0,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-3.1-flash-lite",
+      "priced": true,
+      "inputUsd": 0.00114725,
+      "audioUsd": 0,
+      "outputUsd": 0.000717,
+      "totalUsd": 0.00186425,
+      "tokens": {
+        "input": 4589,
+        "audio": 0,
+        "output": 478,
+        "thoughts": 0
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:search-lamp",
+        "ok": true,
+        "timed": true,
+        "timeOk": false,
+        "detail": "#1 at 2.5s (exp 5.5s)"
+      },
+      {
+        "fact": "step:select-electronics",
+        "ok": false,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#2 at 8.5s (exp 9.5s); narrated=false, expected true"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": false,
+        "detail": "not found",
+        "timed": true,
+        "timeOk": false
+      },
+      {
+        "fact": "failure",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "12.0s (exp 13.0s): After clicking the page 2 button, the category filter automatically resets from 'Electronics' to 'All', broadening the search results."
+      },
+      {
+        "fact": "claim:category-dropped",
+        "ok": false,
+        "detail": "not found"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=false"
+      },
+      {
+        "fact": "unknown:expected",
+        "ok": true,
+        "detail": "listed"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "reproducible (exp reproducible)"
+      }
+    ],
+    "factsHit": 5,
+    "factsTotal": 8,
+    "timedHit": 2,
+    "timedTotal": 4,
+    "fabrications": [],
+    "extraSteps": 1
+  }
+}

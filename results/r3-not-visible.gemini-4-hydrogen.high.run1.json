@@ -1,0 +1,143 @@
+{
+  "report": {
+    "title": "Claimed category filter reset to All on pagination not visible on screen",
+    "startingConditions": [
+      {
+        "fact": "Viewing the Acme Store Products page",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "App version displayed at bottom is Acme Store demo v1.4.3",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Category dropdown is set to All and Search input is empty",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Status shows \"Category: All · Showing 1–5 of 30\" on page 1 of 6",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Opens Category dropdown and selects Home",
+        "t": 7,
+        "source": "both",
+        "narrated": true,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Clicks pagination button 2",
+        "t": 12,
+        "source": "both",
+        "narrated": true,
+        "note": "Speaker claims the filter resets to All after this step, but the screen continues to show Category set to Home and \"Category: Home · Showing 6–7 of 7\"."
+      }
+    ],
+    "observedFailure": null,
+    "claims": [
+      {
+        "text": "The filter resets to All again after pressing page 2",
+        "t": 12.5,
+        "supportedByVideo": "no"
+      }
+    ],
+    "expectedBehavior": {
+      "stated": false,
+      "text": null,
+      "t": null
+    },
+    "unknowns": [
+      "Expected behaviour is not stated in the recording",
+      "Browser and operating system are not visible",
+      "Browser address bar is hidden, though a link preview at t=10 shows localhost:3000/demo?fixed=1&category=Home&page=2"
+    ],
+    "verdict": "not_visible"
+  },
+  "metrics": {
+    "model": "gemini-4-hydrogen",
+    "uploadMode": "files",
+    "fps": 1,
+    "mediaResolution": "HIGH",
+    "sizeBytes": 680867,
+    "timings": {
+      "geminiUploadMs": 2768,
+      "geminiProcessingMs": 2467,
+      "generationMs": 37832,
+      "totalMs": 43072
+    },
+    "attempts": 1,
+    "transientErrors": 0,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-4-hydrogen",
+      "priced": false,
+      "inputUsd": 0,
+      "audioUsd": 0,
+      "outputUsd": 0,
+      "totalUsd": 0,
+      "tokens": {
+        "input": 6826,
+        "audio": 0,
+        "output": 553,
+        "thoughts": 1588
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:select-home",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#1 at 7.0s (exp 6.5s)"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#2 at 12.0s (exp 12.5s)"
+      },
+      {
+        "fact": "failure:none",
+        "ok": true,
+        "detail": "correctly absent"
+      },
+      {
+        "fact": "claim:claims-reset",
+        "ok": true,
+        "detail": "“The filter resets to All again after pressing page 2” supported=no (exp no)"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=false"
+      },
+      {
+        "fact": "unknown:expected",
+        "ok": true,
+        "detail": "listed"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "not_visible (exp not_visible)"
+      }
+    ],
+    "factsHit": 7,
+    "factsTotal": 7,
+    "timedHit": 2,
+    "timedTotal": 2,
+    "fabrications": [],
+    "extraSteps": 0
+  }
+}

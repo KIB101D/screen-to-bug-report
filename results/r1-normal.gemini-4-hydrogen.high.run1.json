@@ -1,0 +1,143 @@
+{
+  "report": {
+    "title": "Category filter resets to All when navigating to page 2",
+    "startingConditions": [
+      {
+        "fact": "On the Acme Store Products page (footer shows \"Acme Store demo v1.4.2\")",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Category dropdown is set to \"All\"",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Search field is empty (placeholder \"Search products...\")",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Status text displays \"Category: All · Showing 1–5 of 30\"",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Pagination is on page 1 of 6",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Selects \"Electronics\" from the Category dropdown",
+        "t": 7,
+        "source": "both",
+        "narrated": true,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Clicks pagination button \"2\"",
+        "t": 15,
+        "source": "both",
+        "narrated": true,
+        "note": null
+      }
+    ],
+    "observedFailure": {
+      "description": "Navigating to page 2 resets the Category filter from \"Electronics\" back to \"All\" and reverts the item total and pagination to all categories.",
+      "evidence": "Category dropdown \"Electronics\" → \"All\"; status text \"Category: Electronics · Showing 1–5 of 15\" → \"Category: All · Showing 6–10 of 30\"; pagination pages \"1 2 3\" → \"1 2 3 4 5 6\"",
+      "t": 15,
+      "visible": true
+    },
+    "claims": [],
+    "expectedBehavior": {
+      "stated": true,
+      "text": "It should stay on Electronics",
+      "t": 17
+    },
+    "unknowns": [
+      "Browser and operating system are not visible in the recording",
+      "Full address bar URL is not visible (link hover preview at 00:13 shows localhost:3000/demo?page=2)"
+    ],
+    "verdict": "reproducible"
+  },
+  "metrics": {
+    "model": "gemini-4-hydrogen",
+    "uploadMode": "files",
+    "fps": 1,
+    "mediaResolution": "HIGH",
+    "sizeBytes": 906917,
+    "timings": {
+      "geminiUploadMs": 2353,
+      "geminiProcessingMs": 2398,
+      "generationMs": 126855,
+      "totalMs": 131624
+    },
+    "attempts": 1,
+    "transientErrors": 1,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-4-hydrogen",
+      "priced": false,
+      "inputUsd": 0,
+      "audioUsd": 0,
+      "outputUsd": 0,
+      "totalUsd": 0,
+      "tokens": {
+        "input": 8048,
+        "audio": 0,
+        "output": 621,
+        "thoughts": 1958
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:select-electronics",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#1 at 7.0s (exp 6.0s)"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#2 at 15.0s (exp 14.5s)"
+      },
+      {
+        "fact": "failure",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "15.0s (exp 15.0s): Navigating to page 2 resets the Category filter from \"Electronics\" back to \"All\" and reverts the item total and pagination to all categories."
+      },
+      {
+        "fact": "claim:category-reset",
+        "ok": false,
+        "detail": "not found"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=true"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "reproducible (exp reproducible)"
+      }
+    ],
+    "factsHit": 5,
+    "factsTotal": 6,
+    "timedHit": 3,
+    "timedTotal": 3,
+    "fabrications": [],
+    "extraSteps": 0
+  }
+}

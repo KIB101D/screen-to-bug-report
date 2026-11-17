@@ -1,0 +1,148 @@
+{
+  "report": {
+    "title": "Category filter resets to All when navigating to page 2 with active search query",
+    "startingConditions": [
+      {
+        "fact": "User is on the Acme Store Products page at URL localhost:3000/demo (app version Acme Store demo v1.4.2)",
+        "source": "visible",
+        "t": 0
+      },
+      {
+        "fact": "Category is set to All, Search input is empty, page 1 is active, and text reads Category: All · Showing 1–5 of 30",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Types \"lamp\" into the Search input",
+        "t": 4.5,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Selects \"Electronics\" in the Category dropdown",
+        "t": 9,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 3,
+        "action": "Clicks page 2 in the pagination controls",
+        "t": 12,
+        "source": "both",
+        "narrated": true,
+        "note": "Speaker initially said \"Three\" before correcting themselves to \"sorry, page two\"."
+      }
+    ],
+    "observedFailure": {
+      "description": "Navigating to page 2 drops the selected Electronics category filter, resets the Category dropdown to All, and displays products from other categories.",
+      "evidence": "Category dropdown \"Electronics\", URL \"localhost:3000/demo?category=Electronics&q=lamp\", status \"Category: Electronics · Search: \"lamp\" · Showing 1–5 of 7\" → Category dropdown \"All\", URL \"localhost:3000/demo?q=lamp&page=2\", status \"Category: All · Search: \"lamp\" · Showing 6–10 of 11\"",
+      "t": 12,
+      "visible": true
+    },
+    "claims": [],
+    "expectedBehavior": {
+      "stated": false,
+      "text": null,
+      "t": null
+    },
+    "unknowns": [
+      "Expected behaviour is not stated in the recording",
+      "Browser version, operating system, and underlying product dataset/backend setup are not shown"
+    ],
+    "verdict": "reproducible"
+  },
+  "metrics": {
+    "model": "gemini-4-hydrogen",
+    "uploadMode": "files",
+    "fps": 1,
+    "mediaResolution": "HIGH",
+    "sizeBytes": 823810,
+    "timings": {
+      "geminiUploadMs": 2532,
+      "geminiProcessingMs": 2480,
+      "generationMs": 42135,
+      "totalMs": 47149
+    },
+    "attempts": 1,
+    "transientErrors": 0,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-4-hydrogen",
+      "priced": false,
+      "inputUsd": 0,
+      "audioUsd": 0,
+      "outputUsd": 0,
+      "totalUsd": 0,
+      "tokens": {
+        "input": 6062,
+        "audio": 0,
+        "output": 627,
+        "thoughts": 1658
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:search-lamp",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#1 at 4.5s (exp 5.5s)"
+      },
+      {
+        "fact": "step:select-electronics",
+        "ok": false,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#2 at 9.0s (exp 9.5s); narrated=false, expected true"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#3 at 12.0s (exp 12.5s)"
+      },
+      {
+        "fact": "failure",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "12.0s (exp 13.0s): Navigating to page 2 drops the selected Electronics category filter, resets the Category dropdown to All, and displays products from other categories."
+      },
+      {
+        "fact": "claim:category-dropped",
+        "ok": false,
+        "detail": "not found"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=false"
+      },
+      {
+        "fact": "unknown:expected",
+        "ok": true,
+        "detail": "listed"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "reproducible (exp reproducible)"
+      }
+    ],
+    "factsHit": 6,
+    "factsTotal": 8,
+    "timedHit": 4,
+    "timedTotal": 4,
+    "fabrications": [],
+    "extraSteps": 0
+  }
+}

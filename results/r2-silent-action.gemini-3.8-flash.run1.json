@@ -1,0 +1,146 @@
+{
+  "report": {
+    "title": "Pagination inconsistency after applying search and category filters",
+    "startingConditions": [
+      {
+        "fact": "The user is on the Acme Store products page at localhost:3000/demo",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Types 'lamp' into the search input field",
+        "t": 2.5,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Selects the 'Electronics' category from the dropdown",
+        "t": 7.5,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 3,
+        "action": "Clicks on pagination page number 3",
+        "t": 11.5,
+        "source": "visible",
+        "narrated": true,
+        "note": null
+      }
+    ],
+    "observedFailure": {
+      "description": "After selecting pagination page 3, the page jumps to showing items 6-10 on page 2 instead of the expected page 3.",
+      "t": 12,
+      "visible": true
+    },
+    "claims": [
+      {
+        "text": "The user says 'Sorry, sorry page 2' after the page unexpectedly renders page 2 content instead of page 3.",
+        "t": 12,
+        "supportedByVideo": "yes"
+      }
+    ],
+    "expectedBehavior": {
+      "stated": false,
+      "text": null,
+      "t": null
+    },
+    "unknowns": [
+      "Expected behaviour is not stated in the recording"
+    ],
+    "verdict": "reproducible"
+  },
+  "metrics": {
+    "model": "gemini-3.1-flash-lite",
+    "uploadMode": "files",
+    "fps": 1,
+    "sizeBytes": 823810,
+    "timings": {
+      "geminiUploadMs": 2415,
+      "geminiProcessingMs": 3783,
+      "generationMs": 276225,
+      "totalMs": 282425
+    },
+    "attempts": 1,
+    "transientErrors": 8,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-3.1-flash-lite",
+      "priced": true,
+      "inputUsd": 0.00044175,
+      "audioUsd": 0,
+      "outputUsd": 0.0006945,
+      "totalUsd": 0.00113625,
+      "tokens": {
+        "input": 1767,
+        "audio": 0,
+        "output": 463,
+        "thoughts": 0
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:search-lamp",
+        "ok": true,
+        "timed": true,
+        "timeOk": false,
+        "detail": "#1 at 2.5s (exp 5.5s)"
+      },
+      {
+        "fact": "step:select-electronics",
+        "ok": false,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#2 at 7.5s (exp 9.5s); narrated=false, expected true"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": false,
+        "detail": "not found",
+        "timed": true,
+        "timeOk": false
+      },
+      {
+        "fact": "failure",
+        "ok": false,
+        "timed": true,
+        "timeOk": false,
+        "detail": "12.0s (exp 13.0s): After selecting pagination page 3, the page jumps to showing items 6-10 on page 2 instead of the expected page 3."
+      },
+      {
+        "fact": "claim:category-dropped",
+        "ok": false,
+        "detail": "not found"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=false"
+      },
+      {
+        "fact": "unknown:expected",
+        "ok": true,
+        "detail": "listed"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "reproducible (exp reproducible)"
+      }
+    ],
+    "factsHit": 4,
+    "factsTotal": 8,
+    "timedHit": 1,
+    "timedTotal": 4,
+    "fabrications": [],
+    "extraSteps": 1
+  }
+}

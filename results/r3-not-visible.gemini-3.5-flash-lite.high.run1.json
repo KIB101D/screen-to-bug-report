@@ -1,0 +1,134 @@
+{
+  "report": {
+    "title": "Category filter resets when clicking pagination",
+    "startingConditions": [
+      {
+        "fact": "Acme Store demo v1.4.3 page is open, showing Products with Category set to All",
+        "source": "visible",
+        "t": 0
+      }
+    ],
+    "steps": [
+      {
+        "n": 1,
+        "action": "Clicks Category dropdown",
+        "t": 4.1,
+        "source": "visible",
+        "narrated": false,
+        "note": null
+      },
+      {
+        "n": 2,
+        "action": "Selects Home category",
+        "t": 7.1,
+        "source": "visible",
+        "narrated": true,
+        "note": null
+      },
+      {
+        "n": 3,
+        "action": "Clicks pagination page 2",
+        "t": 11.8,
+        "source": "visible",
+        "narrated": true,
+        "note": null
+      }
+    ],
+    "observedFailure": null,
+    "claims": [
+      {
+        "text": "the filter resets to all again",
+        "t": 13.5,
+        "supportedByVideo": "no"
+      }
+    ],
+    "expectedBehavior": {
+      "stated": false,
+      "text": null,
+      "t": null
+    },
+    "unknowns": [
+      "Expected behaviour is not stated in the recording"
+    ],
+    "verdict": "not_visible"
+  },
+  "metrics": {
+    "model": "gemini-3.5-flash-lite",
+    "uploadMode": "files",
+    "fps": 1,
+    "mediaResolution": "HIGH",
+    "sizeBytes": 680867,
+    "timings": {
+      "geminiUploadMs": 2416,
+      "geminiProcessingMs": 5931,
+      "generationMs": 2598,
+      "totalMs": 10947
+    },
+    "attempts": 1,
+    "transientErrors": 0,
+    "rejected": [],
+    "cost": {
+      "model": "gemini-3.5-flash-lite",
+      "priced": true,
+      "inputUsd": 0.0015975,
+      "audioUsd": 0,
+      "outputUsd": 0.00094,
+      "totalUsd": 0.0025375,
+      "tokens": {
+        "input": 5325,
+        "audio": 0,
+        "output": 376,
+        "thoughts": 0
+      }
+    }
+  },
+  "comparison": {
+    "checks": [
+      {
+        "fact": "step:select-home",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#2 at 7.1s (exp 6.5s)"
+      },
+      {
+        "fact": "step:open-page-2",
+        "ok": true,
+        "timed": true,
+        "timeOk": true,
+        "detail": "#3 at 11.8s (exp 12.5s)"
+      },
+      {
+        "fact": "failure:none",
+        "ok": true,
+        "detail": "correctly absent"
+      },
+      {
+        "fact": "claim:claims-reset",
+        "ok": true,
+        "detail": "“the filter resets to all again” supported=no (exp no)"
+      },
+      {
+        "fact": "expectedBehavior",
+        "ok": true,
+        "detail": "stated=false"
+      },
+      {
+        "fact": "unknown:expected",
+        "ok": true,
+        "detail": "listed"
+      },
+      {
+        "fact": "verdict",
+        "ok": true,
+        "detail": "not_visible (exp not_visible)"
+      }
+    ],
+    "factsHit": 7,
+    "factsTotal": 7,
+    "timedHit": 2,
+    "timedTotal": 2,
+    "fabrications": [],
+    "extraSteps": 1
+  }
+}
