@@ -74,6 +74,8 @@ export const PRICING: Record<string, { input: number; audioInput: number; output
   "gemini-3.1-flash-lite": { input: 0.25, audioInput: 0.5, output: 1.5 },
   "gemini-2.5-flash": { input: 0.3, audioInput: 1.0, output: 2.5 },
   "gemini-3.5-flash": { input: 1.5, audioInput: 1.5, output: 9.0 },
+  // Standard tier (batch is half). No separate audio rate found; assumed equal to input.
+  "gemini-4-hydrogen": { input: 1.5, audioInput: 1.5, output: 7.5 },
 };
 
 export const BLOB_ACCESS = (process.env.BLOB_ACCESS ?? "public") as "public" | "private";

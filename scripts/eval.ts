@@ -7,13 +7,17 @@
  *   npm run eval -- expected/r2.json  # one recording
  *   GEMINI_MODEL=gemini-3.5-flash npm run eval
  *
- * Results: results/<recording>.<model>.run<N>.json and results/summary-<model>.md
+ * Results: results/<recording>.<model>.<resolution>.run<N>.json and
+ * results/summary-<model>-<resolution>[-<recordings>].md. A run on a subset of
+ * recordings gets its own summary file, so it never overwrites the full-set table.
+ * Rebuild a summary from saved runs without calling the API: npm run summary.
  */
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { analyzeVideo, AnalyzeError } from "../src/lib/analyze";
 import { GEMINI } from "../src/lib/config";
 import { compare, type Expected } from "../src/lib/eval/compare";
+import { renderSummary, type RunRow } from "../src/lib/eval/summary";
 import { mp4Duration } from "./mp4-duration";
 
 const MIME: Record<string, string> = { ".mp4": "video/mp4", ".mov": "video/quicktime", ".webm": "video/webm" };
@@ -28,11 +32,7 @@ async function main() {
     : (await readdir("expected")).filter((f) => f.endsWith(".json")).sort().map((f) => path.join("expected", f));
 
   await mkdir("results", { recursive: true });
-  const rows: string[] = [];
-  const detail: string[] = [];
-  let totalCost = 0;
-  let totalMs = 0;
-  let n = 0;
+  const rows: RunRow[] = [];
 
   for (const file of expectedFiles) {
     const exp = JSON.parse(await readFile(file, "utf8")) as Expected;
@@ -52,51 +52,25 @@ async function main() {
           displayName: exp.recording,
           onStage: (stage) => process.stdout.write(`${stage} (+${((performance.now() - started) / 1000).toFixed(0)} s) … `),
         });
-        const wallMs = performance.now() - started;
         const cmp = compare(report, exp);
         const base = `${path.parse(exp.recording).name}.${metrics.model.replace(/ \+ /g, "+")}.${GEMINI.mediaResolution.toLowerCase()}.run${run}`;
         await writeFile(path.join("results", `${base}.json`), JSON.stringify({ report, metrics, comparison: cmp }, null, 2));
-
-        totalCost += metrics.cost.totalUsd;
-        totalMs += wallMs;
-        n++;
-        rows.push(
-          `| ${exp.recording} | ${run} | ${metrics.model} | ${report.verdict} ${report.verdict === exp.verdict ? "✓" : "✗"} | ${cmp.factsHit}/${cmp.factsTotal} | ${cmp.timedHit}/${cmp.timedTotal} | ${cmp.fabrications.length} | ${metrics.attempts}${metrics.transientErrors ? ` (+${metrics.transientErrors} busy)` : ""} | ${(wallMs / 1000).toFixed(1)} s | $${metrics.cost.totalUsd.toFixed(4)} |`,
+        rows.push({ recording: exp.recording, run, expectedVerdict: exp.verdict, report, metrics, comparison: cmp, ms: metrics.timings.totalMs });
+        console.log(
+          `${cmp.factsHit}/${cmp.factsTotal} facts, ${(metrics.timings.totalMs / 1000).toFixed(1)} s, ${metrics.cost.priced ? `$${metrics.cost.totalUsd.toFixed(4)}` : "unpriced"}`,
         );
-        detail.push(
-          `### ${exp.recording} run ${run}`,
-          ...cmp.checks.map((c) => `- ${c.ok ? "✓" : "✗"}${c.timed ? (c.timeOk ? " ⏱✓" : " ⏱✗") : ""} ${c.fact}: ${c.detail}`),
-          ...cmp.fabrications.map((f) => `- ⚠ fabrication: ${f}`),
-          ...(metrics.rejected.length ? [`- retry fixed: ${metrics.rejected.flat().join("; ")}`] : []),
-          "",
-        );
-        console.log(`${cmp.factsHit}/${cmp.factsTotal} facts, ${(wallMs / 1000).toFixed(1)} s, $${metrics.cost.totalUsd.toFixed(4)}`);
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
-        rows.push(`| ${exp.recording} | ${run} | – | error | – | – | – | ${e instanceof AnalyzeError ? (e.metrics?.attempts ?? "–") : "–"} | – | – |`);
-        detail.push(`### ${exp.recording} run ${run}`, `- error: ${msg}`, "");
+        rows.push({ recording: exp.recording, run, error: msg, attempts: e instanceof AnalyzeError ? e.metrics?.attempts : undefined });
         console.log(`error: ${msg}`);
       }
     }
   }
 
-  const summary = [
-    `# Eval: ${GEMINI.model}${GEMINI.fallbackModels.length ? ` (fallback ${GEMINI.fallbackModels.join(", ")})` : ""}, ${GEMINI.fps} fps, media ${GEMINI.mediaResolution}, upload=${GEMINI.uploadMode}${GEMINI.thinkingLevel ? `, thinking ${GEMINI.thinkingLevel}` : ""}`,
-    "",
-    `Run at ${new Date().toISOString()}. Timestamps count as correct within ±2 s.`,
-    "",
-    "| Recording | Run | Answered by | Verdict | Facts | Timestamps ±2 s | Fabrications | Attempts | Time | Cost |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
-    ...rows,
-    "",
-    n ? `Average: ${(totalMs / n / 1000).toFixed(1)} s and $${(totalCost / n).toFixed(4)} per recording (paid-tier list prices, retries included, hosting excluded).` : "",
-    "",
-    "## Details",
-    "",
-    ...detail,
-  ].join("\n");
-
-  await writeFile(path.join("results", `summary-${GEMINI.model}-${GEMINI.mediaResolution.toLowerCase()}.md`), summary);
+  const title = `# Eval: ${GEMINI.model}${GEMINI.fallbackModels.length ? ` (fallback ${GEMINI.fallbackModels.join(", ")})` : ""}, ${GEMINI.fps} fps, media ${GEMINI.mediaResolution}, upload=${GEMINI.uploadMode}${GEMINI.thinkingLevel ? `, thinking ${GEMINI.thinkingLevel}` : ""}`;
+  const summary = renderSummary(title, `Run at ${new Date().toISOString()}.`, rows);
+  const subset = files.length ? `-${expectedFiles.map((f) => path.parse(f).name).join("+")}` : "";
+  await writeFile(path.join("results", `summary-${GEMINI.model}-${GEMINI.mediaResolution.toLowerCase()}${subset}.md`), summary);
   console.log("\n" + summary.split("## Details")[0]);
 }
 

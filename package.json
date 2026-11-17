@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "eval": "tsx --env-file-if-exists=.env.local scripts/eval.ts",
-    "typecheck": "tsc --noEmit",
-    "models": "tsx --env-file-if-exists=.env.local scripts/models.ts"
+    "typecheck": "next typegen && tsc --noEmit",
+    "models": "tsx --env-file-if-exists=.env.local scripts/models.ts",
+    "summary": "tsx scripts/summarize.ts"
   },
   "dependencies": {
     "@google/genai": "^3.4.0",
