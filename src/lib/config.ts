@@ -22,6 +22,12 @@ export const GEMINI = {
   thinkingLevel: process.env.GEMINI_THINKING_LEVEL as "MINIMAL" | "LOW" | "MEDIUM" | "HIGH" | undefined,
   /** Frames per second sampled from the video. Gemini default is 1. */
   fps: Number(process.env.GEMINI_VIDEO_FPS ?? 1),
+  /**
+   * Tokens per video frame. Screen recordings are mostly small UI text, so HIGH by default:
+   * the first eval run used only ~2k input tokens for a 15-20 s clip (low resolution)
+   * and the model trusted the narration over a label it could not read (R3).
+   */
+  mediaResolution: (process.env.GEMINI_MEDIA_RESOLUTION ?? "HIGH") as "LOW" | "MEDIUM" | "HIGH",
   /** "files" = Files API upload + wait for ACTIVE; "inline" = base64 in the request (small files only). */
   uploadMode: (process.env.GEMINI_UPLOAD_MODE ?? "files") as "files" | "inline",
   /** Inline requests are capped by the API; fall back to the Files API above this. */

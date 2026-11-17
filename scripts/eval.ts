@@ -54,7 +54,7 @@ async function main() {
         });
         const wallMs = performance.now() - started;
         const cmp = compare(report, exp);
-        const base = `${path.parse(exp.recording).name}.${metrics.model.replace(/ \+ /g, "+")}.run${run}`;
+        const base = `${path.parse(exp.recording).name}.${metrics.model.replace(/ \+ /g, "+")}.${GEMINI.mediaResolution.toLowerCase()}.run${run}`;
         await writeFile(path.join("results", `${base}.json`), JSON.stringify({ report, metrics, comparison: cmp }, null, 2));
 
         totalCost += metrics.cost.totalUsd;
@@ -81,7 +81,7 @@ async function main() {
   }
 
   const summary = [
-    `# Eval: ${GEMINI.model}${GEMINI.fallbackModels.length ? ` (fallback ${GEMINI.fallbackModels.join(", ")})` : ""}, ${GEMINI.fps} fps, upload=${GEMINI.uploadMode}`,
+    `# Eval: ${GEMINI.model}${GEMINI.fallbackModels.length ? ` (fallback ${GEMINI.fallbackModels.join(", ")})` : ""}, ${GEMINI.fps} fps, media ${GEMINI.mediaResolution}, upload=${GEMINI.uploadMode}${GEMINI.thinkingLevel ? `, thinking ${GEMINI.thinkingLevel}` : ""}`,
     "",
     `Run at ${new Date().toISOString()}. Timestamps count as correct within ±2 s.`,
     "",
@@ -96,7 +96,7 @@ async function main() {
     ...detail,
   ].join("\n");
 
-  await writeFile(path.join("results", `summary-${GEMINI.model}.md`), summary);
+  await writeFile(path.join("results", `summary-${GEMINI.model}-${GEMINI.mediaResolution.toLowerCase()}.md`), summary);
   console.log("\n" + summary.split("## Details")[0]);
 }
 

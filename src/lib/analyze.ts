@@ -2,6 +2,7 @@ import {
   ApiError,
   FileState,
   GoogleGenAI,
+  MediaResolution,
   ThinkingLevel,
   type Content,
   type GenerateContentParameters,
@@ -27,6 +28,7 @@ export type AnalyzeMetrics = {
   model: string;
   uploadMode: "files" | "inline";
   fps: number;
+  mediaResolution: string;
   sizeBytes: number;
   timings: { geminiUploadMs: number; geminiProcessingMs: number; generationMs: number; totalMs: number };
   attempts: number;
@@ -120,6 +122,7 @@ export async function analyzeVideo(input: AnalyzeInput): Promise<AnalyzeResult> 
     model: usages.at(-1)?.model ?? GEMINI.model,
     uploadMode,
     fps: GEMINI.fps,
+    mediaResolution: GEMINI.mediaResolution,
     sizeBytes: input.data.byteLength,
     timings: { ...timings, totalMs: Math.round(performance.now() - started) },
     attempts: usages.length,
@@ -176,6 +179,7 @@ export async function analyzeVideo(input: AnalyzeInput): Promise<AnalyzeResult> 
             systemInstruction: SYSTEM_PROMPT,
             responseMimeType: "application/json",
             responseSchema: geminiReportSchema,
+            mediaResolution: MediaResolution[`MEDIA_RESOLUTION_${GEMINI.mediaResolution}`],
             ...(GEMINI.temperature != null ? { temperature: GEMINI.temperature } : {}),
             ...(GEMINI.thinkingLevel ? { thinkingConfig: { thinkingLevel: ThinkingLevel[GEMINI.thinkingLevel] } } : {}),
           },
