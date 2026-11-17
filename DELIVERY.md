@@ -23,7 +23,7 @@ Expected facts for each recording are in `expected/*.json` and were committed be
 | R3 failure not visible | `/demo?fixed=1`: Home, page 2, filter stays, speaker claims it reset | No visible failure, claim marked not supported, `not_visible` | `not_visible` ×2; facts 7/7, 7/7; timecodes 2/2, 2/2; 0 invented |
 | R4 new input | Recorded after all tuning: Home, the "Next →" button, filter resets | 2 steps, failure at ~9 s, expected behaviour stated | `reproducible`; facts 6/6; timecodes 3/3; 0 invented |
 
-Full output: `results/summary-gemini-3.5-flash-lite-high.md` and one JSON per run.
+Full output: `results/summary-gemini-3.5-flash-lite-high.md` (all seven final runs) and one JSON per run. Earlier experiments are in `results/archive/` with a short README.
 
 ## What failed and known limits
 
@@ -31,21 +31,24 @@ Full output: `results/summary-gemini-3.5-flash-lite-high.md` and one JSON per ru
 - **R1** lists the expected behaviour but does not record "the category is back to All" as a separate claim.
 - **R4** has one wrong starting condition ("page 2 is selected" at 0 s; the page was 1). The eval does not check starting conditions, so its 6/6 does not cover this. Checking them is the next eval improvement.
 - **Report title for an invisible failure.** In R3 the model titles the report after the claimed symptom. The UI and the Markdown export prefix such titles with "Claimed:" whenever the verdict is not `reproducible`.
-- **Model availability.** `gemini-2.5-flash` and `gemini-2.5-pro` return 404 for new API keys. `gemini-3.8-flash`, `3.7`, `3.6` and `3.5-flash` returned 503 (overloaded) for the whole evening of testing. Gemini 4 and Omni models have a free-tier quota of 0. The final model is the one that was both available and accurate, not the one planned.
+- **Model availability.** `gemini-2.5-flash` and `gemini-2.5-pro` return 404 for new API keys. `gemini-3.8-flash`, `3.7`, `3.6` and `3.5-flash` returned 503 (overloaded) for the whole evening of testing. `gemini-4-argon`, `gemini-4-carbon` and Omni Flash have a free-tier quota of 0. `gemini-4-hydrogen` did answer; see the comparison below for why it is not the default.
 - **No fallback model by default.** An overloaded main model is retried 4 times with backoff. A fallback (`GEMINI_FALLBACK_MODELS`) is opt-in because `gemini-3.1-flash-lite` invented a failure in R3; when one answers, the report shows a warning.
 - **Eval matcher was fixed after the first run.** The first matcher looked for the literal "page 2" and missed "Clicks on page number 2". It now accepts paraphrases via a regular expression. The expected facts themselves did not change, and the first run was re-scored with the new matcher for the comparison below.
 - Scope as in the brief: one language (English narration), one speaker, up to 90 s. Reports live in the browser tab only; there is no history or sharing link.
 
 ## How the model choice was made
 
-All runs use the same three recordings and expected facts; R4 was recorded only after this table was final.
+All runs use the same three recordings and expected facts; R4 was recorded only after this table was final. Cost is per recording at paid-tier list prices, time is the pipeline time per recording.
 
-| Configuration | R1 facts | R2 facts | R3 | Cost / recording |
-| --- | --- | --- | --- | --- |
-| 3.1 Flash-Lite, low media resolution (~2k input tokens) | 5/6 | 4/8 | invented a visible failure | $0.0012 |
-| 3.1 Flash-Lite, high resolution | 5/6 | 5/8 | invented a visible failure | $0.0019 |
-| 3.1 Flash-Lite, high resolution, evidence rule in prompt | 5/6 | 5/8 | invented the failure and its quoted evidence | $0.0021 |
-| **3.5 Flash-Lite, high resolution, evidence rule** | **5/6** | **5/8** | **`not_visible`, 7/7** | **$0.0028** |
+| Configuration | R1 facts | R2 facts | R3 | Time | Cost / recording |
+| --- | --- | --- | --- | --- | --- |
+| 3.1 Flash-Lite, low media resolution (~2k input tokens) | 5/6 | 4/8 | invented a visible failure | n/a (overload waits) | $0.0012 |
+| 3.1 Flash-Lite, high resolution | 5/6 | 5/8 | invented a visible failure | n/a (overload waits) | $0.0019 |
+| 3.1 Flash-Lite, high resolution, evidence rule in prompt | 5/6 | 5/8 | invented the failure and its quoted evidence | ~10 s | $0.0021 |
+| Gemini 4 Hydrogen, high resolution, evidence rule (1 run) | 5/6 | 6/8 | `not_visible`, 7/7 | 43–132 s | ≈ $0.028 |
+| **3.5 Flash-Lite, high resolution, evidence rule (2 runs)** | **5/6** | **5/8** | **`not_visible`, 7/7** | **7–11 s** | **≈ $0.0028** |
+
+Gemini 4 Hydrogen was slightly more accurate on R2 (it noticed the narrated category choice) but about ten times more expensive and five to fifteen times slower, with thinking tokens making up most of its output. For a report that should arrive while the reporter is still looking at it, 3.5 Flash-Lite is the better trade. Hydrogen stays one environment variable away (`GEMINI_MODEL=gemini-4-hydrogen`).
 
 ## Time spent
 
@@ -62,23 +65,23 @@ A second example, about the coding assistant: the first eval matcher it wrote re
 
 ## Time to a useful result (measured)
 
-From the start of analysis to a rendered report, eval runs on gemini-3.5-flash-lite:
+Pipeline time per recording (upload to Gemini, processing, generation, validation), eval runs on gemini-3.5-flash-lite:
 
 | Stage | Measured |
 | --- | --- |
 | Upload to Gemini Files API | 2.3–3.0 s |
 | Gemini video processing | ~2.3 s |
 | Generation | 3–33 s |
-| Total per recording (R1–R4) | 8.6–38.6 s, median ≈ 10 s |
+| Total per recording (R1–R4, 7 runs) | 7.4–37.5 s, median 8.4 s |
 
-On Vercel the browser first uploads the recording to Blob and the server downloads it; both are shown in the report's metrics panel. When the model is overloaded, retries add up to ~30 s before an error is shown. One web run during peak load took 133 s.
+In the web app the time to a rendered report adds the browser upload (to Blob on Vercel) and drawing the frames; the report's metrics panel shows the full time and every stage. When the model is overloaded, retries add up to ~30 s before an error is shown. One web run during peak load took 133 s.
 
 ## Cost per recording
 
 Measured tokens on gemini-3.5-flash-lite: about 4.6–6.5k input (video frames, audio and the prompt) and 460–510 output, no thinking tokens, one attempt per run (no validation retries were needed in the final runs).
 
 - **Variable cost: $0.0025–0.0030 per recording**, retries included, at paid-tier list prices. Free-tier usage was priced as if paid.
-- Pricing assumptions (Gemini API, standard paid tier, checked 2026-11-17): 3.5 Flash-Lite $0.30 per 1M input tokens for text, image, video and audio, $2.50 per 1M output tokens including thinking. 3.1 Flash-Lite $0.25 input / $0.50 audio / $1.50 output (copied from the same page during planning). 3.8 Flash $0.75 / $3.75, a promotional rate until 2026-12-31 that doubles from 2027-01-01.
+- Pricing assumptions (Gemini API, standard paid tier, checked 2026-11-17): 3.5 Flash-Lite $0.30 per 1M input tokens for text, image, video and audio, $2.50 per 1M output tokens including thinking. Gemini 4 Hydrogen $1.50 input / $7.50 output (no separate audio rate found, assumed equal to input). 3.1 Flash-Lite $0.25 input / $0.50 audio / $1.50 output (copied from the same page during planning). 3.8 Flash $0.75 / $3.75, a promotional rate until 2026-12-31 that doubles from 2027-01-01.
 - The API reported no separate audio token count for these models, so audio is priced inside the input total. For 3.5 Flash-Lite this changes nothing because audio and video cost the same.
 - No other paid intermediaries: frame thumbnails are captured in the browser, speech is understood by the same Gemini call.
 - **Hosting, separate:** Vercel Hobby and Vercel Blob, both on free plans. Recordings are deleted from Blob and from the Gemini Files API right after analysis, so storage stays near zero. Not included in the cost per operation.
@@ -91,5 +94,5 @@ Measured tokens on gemini-3.5-flash-lite: about 4.6–6.5k input (video frames, 
 
 1. **Verify the evidence independently.** Grab the frames before and after the failure (already done in the browser for thumbnails) and check the quoted text with OCR or a second vision model; downgrade the verdict if the quote is not on screen. This removes the dependence on one model not inventing evidence.
 2. **Score starting conditions and claims more strictly** in the eval, and grow the test set beyond four recordings with more variety (other flows, longer clips, a recording where the app should ask for clarification).
-3. **Re-run the comparison on Gemini 3.8 Flash** when it is available; the code and eval already support it via `GEMINI_MODEL`.
+3. **Re-run the comparison on Gemini 3.8 Flash and with more Hydrogen runs** when they are available; the code and eval already support it via `GEMINI_MODEL`.
 4. Save reports with a shareable link, so a reviewer can reproduce from a URL instead of a downloaded file.

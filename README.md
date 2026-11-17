@@ -23,7 +23,7 @@ Expected facts were written to `expected/*.json` before the first run. Final con
 | R3 not visible | speaker claims a failure on the fixed page | `not_visible` ✓ ×2 | 7/7, 7/7 | 2/2, 2/2 | 0 |
 | R4 new input | recorded after tuning, "Next →" button | ✓ | 6/6 | 3/3 | 0 |
 
-About 9–39 s from upload to report and ≈ $0.003 per recording at paid-tier list prices. Full tables: `results/`. Method, failures and decisions: `DELIVERY.md`.
+Pipeline time 7–38 s per recording (median 8 s) and ≈ $0.003 per recording at paid-tier list prices. Full table: `results/summary-gemini-3.5-flash-lite-high.md`; model experiments: `results/archive/`. Method, failures and decisions: `DELIVERY.md`.
 
 ## Stack
 
@@ -78,6 +78,6 @@ GEMINI_MODEL=gemini-3.8-flash npm run eval          # another model
 GEMINI_MEDIA_RESOLUTION=LOW npm run eval            # cheaper frames
 ```
 
-Each run writes `results/<recording>.<model>.<resolution>.run<N>.json` and `results/summary-<model>-<resolution>.md` with facts found, timecodes within ±2 s, invented facts, attempts, time and cost.
+Each run writes `results/<recording>.<model>.<resolution>.run<N>.json` and `results/summary-<model>-<resolution>.md` with facts found, timecodes within ±2 s, invented facts, attempts, time and cost. A run on a subset of recordings writes its own summary file instead of overwriting the full one. `npm run summary -- <model> <resolution>` rebuilds a summary from saved runs without calling the API.
 
 To add a new input: record it, write `expected/<name>.json` first and commit, then run `npm run eval -- expected/<name>.json`. Scenario scripts for R1–R4 are in `expected/RECORDING-GUIDE.md`.
