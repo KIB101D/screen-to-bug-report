@@ -22,7 +22,7 @@ async function main() {
   const args = process.argv.slice(2);
   const runsIdx = args.indexOf("--runs");
   const runs = runsIdx >= 0 ? Number(args[runsIdx + 1]) : 1;
-  const files = args.filter((a, i) => a.endsWith(".json") && i !== runsIdx + 1);
+  const files = args.filter((a, i) => a.endsWith(".json") && (runsIdx < 0 || i !== runsIdx + 1));
   const expectedFiles = files.length
     ? files
     : (await readdir("expected")).filter((f) => f.endsWith(".json")).sort().map((f) => path.join("expected", f));
