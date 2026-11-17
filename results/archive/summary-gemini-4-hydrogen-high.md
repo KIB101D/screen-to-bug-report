@@ -1,14 +1,14 @@
-# Eval: gemini-4-hydrogen, 1 fps, media HIGH, upload=files
+# Eval: gemini-4-hydrogen, media HIGH
 
-Run at 2026-11-17T21:46:57.556Z. Timestamps count as correct within ±2 s.
+Rebuilt from 3 saved run file(s); 3 re-priced from stored token counts at current list prices. Timestamps count as correct within ±2 s.
 
 | Recording | Run | Answered by | Verdict | Facts | Timestamps ±2 s | Fabrications | Attempts | Time | Cost |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| r1-normal.mov | 1 | gemini-4-hydrogen | reproducible ✓ | 5/6 | 3/3 | 0 | 1 (+1 busy) | 132.8 s | $0.0000 |
-| r2-silent-action.mov | 1 | gemini-4-hydrogen | reproducible ✓ | 6/8 | 4/4 | 0 | 1 | 48.2 s | $0.0000 |
-| r3-not-visible.mov | 1 | gemini-4-hydrogen | not_visible ✓ | 7/7 | 2/2 | 0 | 1 | 45.0 s | $0.0000 |
+| r1-normal.mov | 1 | gemini-4-hydrogen | reproducible ✓ | 5/6 | 3/3 | 0 | 1 (+1 busy) | 131.6 s | $0.0314 |
+| r2-silent-action.mov | 1 | gemini-4-hydrogen | reproducible ✓ | 6/8 | 4/4 | 0 | 1 | 47.1 s | $0.0262 |
+| r3-not-visible.mov | 1 | gemini-4-hydrogen | not_visible ✓ | 7/7 | 2/2 | 0 | 1 | 43.1 s | $0.0263 |
 
-Average: 75.3 s and $0.0000 per recording (paid-tier list prices, retries included, hosting excluded).
+Average: 73.9 s per recording; $0.0280 per recording at paid-tier list prices (retries included, hosting excluded).
 
 ## Details
 
