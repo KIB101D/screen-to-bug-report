@@ -53,6 +53,6 @@ Recorded only after the prompt and settings were tuned on R1–R3, to check that
 | ~t | Do | Say |
 | --- | --- | --- |
 | 0 | Page loaded: All, page 1 | "Products page, nothing selected." |
-| 4 | Category → Home | "I switch to Home." |
-| 9 | Click **Next →** (not the number) | "And click next." |
-| 10 | (Category: All, of 30) | "It jumped back to all categories. Home should stay selected." |
+| 6 | Category → Home | "Then I jump to the home category." |
+| 8.5 | Click **Next →** (not the number) | "Then click to next." |
+| 9 | (Category: All, of 30) | "And it jumped back to all categories. Home should stay selected." |
