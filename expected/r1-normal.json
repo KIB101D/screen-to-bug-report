@@ -1,5 +1,5 @@
 {
-  "recording": "r1-normal.mp4",
+  "recording": "r1-normal.mov",
   "scenario": "Normal: on /demo the user selects Electronics, opens page 2, the category resets to All. Everything is narrated and the speaker says what should happen.",
   "verdict": "reproducible",
   "steps": [

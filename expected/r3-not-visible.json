@@ -1,5 +1,5 @@
 {
-  "recording": "r3-not-visible.mp4",
+  "recording": "r3-not-visible.mov",
   "scenario": "Claimed failure not visible: on /demo?fixed=1 the user selects Home and opens page 2; the category stays Home, but the speaker says it reset to All again.",
   "verdict": "not_visible",
   "steps": [
