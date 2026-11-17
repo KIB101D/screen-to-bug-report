@@ -1,0 +1,16 @@
+{
+  "recording": "r1-normal.mp4",
+  "scenario": "Normal: on /demo the user selects Electronics, opens page 2, the category resets to All. Everything is narrated and the speaker says what should happen.",
+  "verdict": "reproducible",
+  "steps": [
+    { "id": "select-electronics", "t": 5, "match": ["electronics"], "narrated": true },
+    { "id": "open-page-2", "t": 11, "match": ["page 2|page two|second page"], "narrated": true }
+  ],
+  "failure": { "t": 12, "match": ["all"] },
+  "claims": [
+    { "id": "category-reset", "match": ["all|reset|back"], "supportedByVideo": "yes" }
+  ],
+  "expectedBehaviorStated": true,
+  "unknownsMustMention": [],
+  "forbidden": ["stack trace", "exception", "console", "root cause", "race condition", "caused by", "due to a", "not persisted", "useState"]
+}

@@ -1,0 +1,16 @@
+{
+  "recording": "r3-not-visible.mp4",
+  "scenario": "Claimed failure not visible: on /demo?fixed=1 the user selects Electronics and opens page 2; the category stays Electronics, but the speaker says it reset to All again.",
+  "verdict": "not_visible",
+  "steps": [
+    { "id": "select-electronics", "t": 4, "match": ["electronics"], "narrated": true },
+    { "id": "open-page-2", "t": 10, "match": ["page 2|page two|second page"], "narrated": true }
+  ],
+  "failure": null,
+  "claims": [
+    { "id": "claims-reset", "match": ["all|reset"], "supportedByVideo": "no" }
+  ],
+  "expectedBehaviorStated": false,
+  "unknownsMustMention": [["expected"]],
+  "forbidden": ["stack trace", "exception", "console", "root cause", "race condition", "caused by", "due to a", "not persisted", "useState"]
+}
