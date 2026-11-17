@@ -41,6 +41,3 @@ yarn-error.log*
 next-env.d.ts
 
 !.env.example
-
-# copied from recordings/ at build time
-/public/samples

@@ -26,14 +26,6 @@ const STAGE_LABEL: Record<StageKey, string> = {
 };
 
 type Result = Extract<AnalyzeEvent, { type: "result" }>;
-
-/** Test-set recordings copied to /public/samples at build time (scripts/copy-samples.mjs). */
-const SAMPLES = [
-  { file: "r1-normal.mov", label: "R1 · normal" },
-  { file: "r2-silent-action.mov", label: "R2 · silent action" },
-  { file: "r3-not-visible.mov", label: "R3 · failure not visible" },
-  { file: "r4-next-button.mov", label: "R4 · new input" },
-];
 type Picked = { file: File; src: string; duration: number };
 
 export function Analyzer() {
@@ -44,7 +36,6 @@ export function Analyzer() {
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [timings, setTimings] = useState<ClientTimings | null>(null);
-  const [dragging, setDragging] = useState(false);
   const startedAt = useRef(0);
   const blobUploadMs = useRef<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -88,18 +79,6 @@ export function Analyzer() {
       setError(e instanceof Error ? e.message : "Cannot read this video");
     }
   }, []);
-
-  const pickSample = async (name: string) => {
-    if (running) return;
-    try {
-      const res = await fetch(`/samples/${name}`);
-      if (!res.ok) throw new Error(`Sample ${name} is not available`);
-      const blob = await res.blob();
-      await pick(new File([blob], name, { type: name.endsWith(".mov") ? "video/quicktime" : "video/mp4" }));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load the sample");
-    }
-  };
 
   const run = async () => {
     if (!picked) return;
@@ -174,66 +153,27 @@ export function Analyzer() {
   return (
     <div className="flex flex-col gap-6">
       <section className="rounded-xl border border-zinc-200 bg-white p-5">
-        <input
-          ref={inputRef}
-          type="file"
-          accept="video/mp4,video/quicktime,video/webm"
-          className="hidden"
-          onChange={(e) => {
-            pick(e.target.files?.[0]);
-            e.target.value = "";
-          }}
-        />
-        <div
-          role="button"
-          tabIndex={0}
-          aria-disabled={running}
-          onClick={() => !running && inputRef.current?.click()}
-          onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && !running && inputRef.current?.click()}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragging(true);
-          }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={(e) => {
-            e.preventDefault();
-            setDragging(false);
-            if (!running) pick(e.dataTransfer.files?.[0]);
-          }}
-          className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed px-4 py-8 text-center transition ${
-            dragging ? "border-zinc-900 bg-zinc-50" : "border-zinc-300 hover:border-zinc-500"
-          } ${running ? "pointer-events-none opacity-60" : ""}`}
-        >
-          {picked ? (
-            <>
-              <span className="font-medium">{picked.file.name}</span>
-              <span className="text-sm text-zinc-500">
-                {picked.duration.toFixed(1)} s · {(picked.file.size / 1024 / 1024).toFixed(1)} MB · click or drop to replace
-              </span>
-            </>
-          ) : (
-            <>
-              <span className="font-medium">Drop a screen recording here, or click to choose</span>
-              <span className="text-sm text-zinc-500">
-                One browser workflow, up to {LIMIT_SEC} s, one speaker (narration optional). MP4, MOV or WebM.
-              </span>
-            </>
+        <div className="flex flex-wrap items-center gap-3">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="video/mp4,video/quicktime,video/webm"
+            className="hidden"
+            onChange={(e) => pick(e.target.files?.[0])}
+          />
+          <button
+            type="button"
+            disabled={running}
+            onClick={() => inputRef.current?.click()}
+            className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium hover:bg-zinc-50 disabled:opacity-50"
+          >
+            {picked ? "Choose another recording" : "Choose a screen recording"}
+          </button>
+          {picked && (
+            <span className="text-sm text-zinc-600">
+              {picked.file.name} · {picked.duration.toFixed(1)} s · {(picked.file.size / 1024 / 1024).toFixed(1)} MB
+            </span>
           )}
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className="text-xs text-zinc-500">No recording at hand? Try the test set, analysed live:</span>
-          {SAMPLES.map((s) => (
-            <button
-              key={s.file}
-              type="button"
-              disabled={running}
-              onClick={() => pickSample(s.file)}
-              className="rounded-full border border-zinc-300 px-3 py-1 text-xs hover:bg-zinc-50 disabled:opacity-50"
-            >
-              {s.label}
-            </button>
-          ))}
           <button
             type="button"
             disabled={!picked || running}
@@ -243,6 +183,9 @@ export function Analyzer() {
             {running ? "Analysing…" : "Build bug report"}
           </button>
         </div>
+        <p className="mt-3 text-xs text-zinc-500">
+          One browser workflow, up to {LIMIT_SEC} s, one speaker (narration optional). MP4, MOV or WebM.
+        </p>
 
         {stages.length > 0 && (
           <ol className="mt-4 space-y-1 text-sm">

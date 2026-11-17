@@ -9,9 +9,7 @@
     "lint": "eslint",
     "eval": "tsx --env-file-if-exists=.env.local scripts/eval.ts",
     "typecheck": "tsc --noEmit",
-    "models": "tsx --env-file-if-exists=.env.local scripts/models.ts",
-    "predev": "node scripts/copy-samples.mjs",
-    "prebuild": "node scripts/copy-samples.mjs"
+    "models": "tsx --env-file-if-exists=.env.local scripts/models.ts"
   },
   "dependencies": {
     "@google/genai": "^3.4.0",
