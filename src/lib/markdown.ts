@@ -21,7 +21,12 @@ export function reportToMarkdown(r: Report, recordingName?: string) {
   });
 
   lines.push("", "## Observed failure");
-  lines.push(r.observedFailure ? `${at(r.observedFailure.t)} ${r.observedFailure.description}${r.observedFailure.visible ? "" : " (not visible on screen)"}` : "No failure is visible on screen.");
+  if (r.observedFailure) {
+    lines.push(`${at(r.observedFailure.t)} ${r.observedFailure.description}${r.observedFailure.visible ? "" : " (not visible on screen)"}`);
+    lines.push("", `Evidence on screen: ${r.observedFailure.evidence}`);
+  } else {
+    lines.push("No failure is visible on screen.");
+  }
 
   lines.push("", "## Speaker claims");
   if (r.claims.length === 0) lines.push("- None");

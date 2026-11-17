@@ -11,8 +11,12 @@ export const LIMITS = {
   timestampSlackSec: 1.5,
   /** Waiting for the Gemini Files API to finish processing the upload. */
   fileActiveTimeoutMs: 120_000,
-  /** One generateContent call; without it a stalled request hangs forever. */
-  generationTimeoutMs: Number(process.env.GEMINI_TIMEOUT_MS ?? 180_000),
+  /**
+   * One generateContent call. Overloaded models held the connection for up to ~3 min
+   * before answering 503 (eval run 2), while a successful answer took 10-20 s,
+   * so a stalled call is cut early and the fallback chain moves on.
+   */
+  generationTimeoutMs: Number(process.env.GEMINI_TIMEOUT_MS ?? 75_000),
 };
 
 export const GEMINI = {

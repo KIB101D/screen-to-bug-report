@@ -32,7 +32,7 @@ export const ReportSchema = z
       }),
     ),
     observedFailure: z
-      .object({ description: z.string().min(1), t: seconds, visible: z.boolean() })
+      .object({ description: z.string().min(1), evidence: z.string().min(1), t: seconds, visible: z.boolean() })
       .nullable(),
     claims: z.array(z.object({ text: z.string().min(1), t: seconds, supportedByVideo: z.enum(SUPPORT) })),
     expectedBehavior: z.object({
@@ -118,7 +118,12 @@ export const geminiReportSchema: Schema = obj({
     }),
   ),
   observedFailure: obj(
-    { description: str("What visibly goes wrong, no causes"), t: num(T), visible: bool("Seen on screen") },
+    {
+      description: str("What visibly goes wrong, no causes"),
+      evidence: str("On-screen text or state quoted as displayed, before → after"),
+      t: num(T),
+      visible: bool("Seen on screen"),
+    },
     true,
   ),
   claims: arr(

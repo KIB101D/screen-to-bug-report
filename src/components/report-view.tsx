@@ -204,6 +204,7 @@ export function ReportView({
               <span className="flex flex-col gap-1 text-sm">
                 <span className="font-mono text-xs text-zinc-500">{formatTime(report.observedFailure.t)}</span>
                 <span>{report.observedFailure.description}</span>
+                <span className="font-mono text-xs text-zinc-600">Evidence: {report.observedFailure.evidence}</span>
                 <span>
                   <SourceBadge source="visible" />
                 </span>
