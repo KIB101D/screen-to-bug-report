@@ -127,6 +127,18 @@ export function ReportView({
             <span className="text-xs text-zinc-500">{verdict.hint}</span>
           </div>
           <h2 className="text-lg font-semibold">{report.title}</h2>
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500">
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <SourceBadge source="visible" /> seen in the video
+            </span>
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <SourceBadge source="claimed" /> only said
+            </span>
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <Badge className="bg-amber-50 text-amber-800 ring-amber-200">Not narrated</Badge> done silently
+            </span>
+            <span>Click a step or time to jump to its frame.</span>
+          </p>
           {metrics.primaryModel && metrics.model !== metrics.primaryModel && (
             <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
               Answered by the fallback model {metrics.model} because {metrics.primaryModel} was overloaded. The fallback
@@ -159,10 +171,12 @@ export function ReportView({
           ) : (
             <ul className="space-y-1.5">
               {report.startingConditions.map((c, i) => (
-                <li key={i} className="flex flex-wrap items-center gap-2 text-sm">
+                <li key={i} className="flex items-start gap-2 text-sm">
                   <Time onSeek={seek} t={c.t} />
-                  <span>{c.fact}</span>
-                  <SourceBadge source={c.source} />
+                  <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span>{c.fact}</span>
+                    <SourceBadge source={c.source} />
+                  </span>
                 </li>
               ))}
             </ul>
@@ -230,8 +244,9 @@ export function ReportView({
           ) : (
             <ul className="space-y-1.5">
               {report.claims.map((c, i) => (
-                <li key={i} className="flex flex-wrap items-center gap-2 text-sm">
+                <li key={i} className="flex items-start gap-2 text-sm">
                   <Time onSeek={seek} t={c.t} />
+                  <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <span>“{c.text}”</span>
                   <Badge
                     className={
@@ -248,6 +263,7 @@ export function ReportView({
                         ? "Not supported by video"
                         : "Unclear"}
                   </Badge>
+                  </span>
                 </li>
               ))}
             </ul>
@@ -298,9 +314,9 @@ function Time({ t, onSeek }: { t: number; onSeek: (t: number) => void }) {
 function Thumb({ src }: { src?: string }) {
   return src ? (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt="" className="h-[68px] w-[120px] shrink-0 rounded border border-zinc-200 object-cover object-top" />
+    <img src={src} alt="" className="h-[54px] w-[96px] shrink-0 rounded border border-zinc-200 object-cover object-top sm:h-[68px] sm:w-[120px]" />
   ) : (
-    <span className="h-[68px] w-[120px] shrink-0 animate-pulse rounded bg-zinc-100" />
+    <span className="h-[54px] w-[96px] shrink-0 animate-pulse rounded bg-zinc-100 sm:h-[68px] sm:w-[120px]" />
   );
 }
 
