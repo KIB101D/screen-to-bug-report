@@ -20,8 +20,10 @@ export const LIMITS = {
 };
 
 export const GEMINI = {
-  // gemini-2.5-flash returns 404 for new API keys (checked 2026-11-17).
-  model: process.env.GEMINI_MODEL ?? "gemini-3.8-flash",
+  // Chosen from eval runs on 2026-11-17: gemini-2.5-flash returns 404 for new keys,
+  // 3.8 / 3.7 / 3.6 / 3.5 Flash answered 503 all evening, Gemini 4 and Omni have a
+  // free-tier quota of 0. 3.5 Flash-Lite answered in 10-15 s with the best scores.
+  model: process.env.GEMINI_MODEL ?? "gemini-3.5-flash-lite",
   /** Gemini 3.x thinking level: MINIMAL | LOW | MEDIUM | HIGH. Unset = model default. */
   thinkingLevel: process.env.GEMINI_THINKING_LEVEL as "MINIMAL" | "LOW" | "MEDIUM" | "HIGH" | undefined,
   /** Frames per second sampled from the video. Gemini default is 1. */
@@ -37,7 +39,7 @@ export const GEMINI = {
   /** Inline requests are capped by the API; fall back to the Files API above this. */
   inlineMaxBytes: 15 * 1024 * 1024,
   /** Tried in order when the main model stays overloaded (503/429) after transientRetries. Comma-separated. */
-  fallbackModels: (process.env.GEMINI_FALLBACK_MODELS ?? "").split(",").map((m) => m.trim()).filter(Boolean),
+  fallbackModels: (process.env.GEMINI_FALLBACK_MODELS ?? "gemini-3.1-flash-lite").split(",").map((m) => m.trim()).filter(Boolean),
   /**
    * Retries of the same model on 429/500/503/504 before moving to the next fallback.
    * Kept low: when a model is overloaded, waiting on it cost 2-5 min per recording
@@ -60,12 +62,14 @@ export const GEMINI = {
  * from 2027-01-01 it doubles to $1.50 / $7.50. A separate audio rate was not found,
  * so audio is assumed to cost the same as other input. Re-check on
  * https://ai.google.dev/gemini-api/docs/pricing before reporting.
+ * gemini-3.5-flash-lite: $0.30 for text / image / video / audio input, $2.50 output.
  * Other rows were copied from the same page during planning (2026-11-17).
  */
 export const PRICING: Record<string, { input: number; audioInput: number; output: number }> = {
   "gemini-3.8-flash": { input: 0.75, audioInput: 0.75, output: 3.75 },
   // Same rates as 3.8 Flash (3.8 is built on 3.7), same promo terms.
   "gemini-3.7-flash": { input: 0.75, audioInput: 0.75, output: 3.75 },
+  "gemini-3.5-flash-lite": { input: 0.3, audioInput: 0.3, output: 2.5 },
   "gemini-3.1-flash-lite": { input: 0.25, audioInput: 0.5, output: 1.5 },
   "gemini-2.5-flash": { input: 0.3, audioInput: 1.0, output: 2.5 },
   "gemini-3.5-flash": { input: 1.5, audioInput: 1.5, output: 9.0 },
