@@ -3,15 +3,62 @@
   "scenario": "Omitted action + correction: the user silently searches 'lamp' (never mentioned), then selects Electronics, says 'page three... sorry, page two' and opens page 2. The category resets to All, the search stays. Expected behaviour is not stated.",
   "verdict": "reproducible",
   "steps": [
-    { "id": "search-lamp", "t": 5, "match": ["lamp"], "narrated": false },
-    { "id": "select-electronics", "t": 9, "match": ["electronics"], "narrated": true },
-    { "id": "open-page-2", "t": 15, "match": ["page 2|page two|second page"], "narrated": true, "noteRequired": true }
+    {
+      "id": "search-lamp",
+      "t": 5.5,
+      "match": [
+        "lamp"
+      ],
+      "narrated": false
+    },
+    {
+      "id": "select-electronics",
+      "t": 9.5,
+      "match": [
+        "electronics"
+      ],
+      "narrated": true
+    },
+    {
+      "id": "open-page-2",
+      "t": 12.5,
+      "match": [
+        "page 2|page two|second page"
+      ],
+      "narrated": true,
+      "noteRequired": true
+    }
   ],
-  "failure": { "t": 16, "match": ["all"] },
+  "failure": {
+    "t": 13,
+    "match": [
+      "all"
+    ]
+  },
   "claims": [
-    { "id": "category-dropped", "match": ["category|filter"], "supportedByVideo": "yes" }
+    {
+      "id": "category-dropped",
+      "match": [
+        "category|filter"
+      ],
+      "supportedByVideo": "yes"
+    }
   ],
   "expectedBehaviorStated": false,
-  "unknownsMustMention": [["expected"]],
-  "forbidden": ["stack trace", "exception", "console", "root cause", "race condition", "caused by", "due to a", "not persisted", "useState"]
+  "unknownsMustMention": [
+    [
+      "expected"
+    ]
+  ],
+  "forbidden": [
+    "stack trace",
+    "exception",
+    "console",
+    "root cause",
+    "race condition",
+    "caused by",
+    "due to a",
+    "not persisted",
+    "useState"
+  ]
 }

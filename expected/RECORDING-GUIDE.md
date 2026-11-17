@@ -40,8 +40,8 @@ Do not say what should happen in R2.
 | ~t | Do | Say |
 | --- | --- | --- |
 | 0 | Page loaded | "Products page." |
-| 4 | Category → Electronics | "I filter by Electronics." |
+| 4 | Category → Home | "I filter by Home." |
 | 10 | Click page **2** | "Going to page two." |
-| 11 | (still Electronics, of 15) | "And the filter reset to All again, same bug as before." |
+| 11 | (still Home, of 7) | "And the filter reset to All again, same bug as before." |
 
 Do not say what should happen in R3.
