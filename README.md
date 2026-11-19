@@ -12,6 +12,19 @@ Upload a screen recording of a broken flow (MP4/MOV/WebM, up to 90 s, one browse
 
 `/demo` is a small store with a real defect: pick a category, change page, and the category resets to All. `/demo?fixed=1` is the same page without the defect.
 
+## Supported input
+
+| | This app | Gemini API |
+| --- | --- | --- |
+| Formats | MP4, MOV, WebM (`video/mp4`, `video/quicktime`, `video/webm`) | also MPEG, MPG, WMV, FLV, 3GPP |
+| Length | up to 90 s (scope of the brief) | far longer, depending on the model's context window |
+| Size | up to 100 MB | larger files through the Files API |
+| Audio | used: narration is analysed together with the frames | audio and visual streams are both processed |
+
+The app accepts only the formats a browser can play, because frames for the report are captured in the browser from the uploaded file; MPEG, WMV, FLV and 3GPP would reach Gemini but could not be shown or scrubbed in the report. macOS and iOS screen recordings (MOV or MP4, H.264 + AAC) work as they are.
+
+Sources: Gemini API, [Video understanding](https://ai.google.dev/gemini-api/docs/video-understanding) (video with audio, Files API); Google Cloud, [Video understanding: supported MIME types](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/multimodal/video-understanding) (the same Gemini models on Vertex AI list `video/x-flv`, `video/quicktime`, `video/mpeg`, `video/mpegs`, `video/mpg`, `video/mp4`, `video/webm`, `video/wmv`, `video/3gpp`). Limits in this app are set in `src/lib/config.ts`.
+
 ## Results
 
 Expected facts were written to `expected/*.json` before the first run. Final configuration: `gemini-3.5-flash-lite`, 1 fps, high media resolution.
