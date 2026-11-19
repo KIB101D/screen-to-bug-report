@@ -7,7 +7,8 @@ export function reportToMarkdown(r: Report, recordingName?: string) {
   const at = (t: number) => `\`${formatTime(t)}\``;
   const lines: string[] = [];
   // The title describes the symptom; when the screen does not show it, it is only the speaker's claim.
-  lines.push(`# ${r.verdict === "reproducible" ? "" : "Claimed: "}${r.title}`, "");
+  const prefix = r.verdict === "reproducible" ? "" : r.verdict === "not_visible" ? "Claimed: " : "Unconfirmed: ";
+  lines.push(`# ${prefix}${r.title}`, "");
   if (recordingName) lines.push(`Recording: ${recordingName}  `);
   lines.push(`Verdict: **${r.verdict}**`, "");
 

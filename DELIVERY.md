@@ -31,6 +31,7 @@ Full output: `results/summary-gemini-3.5-flash-lite-high.md` (all seven final ru
 - **R1** lists the expected behaviour but does not record "the category is back to All" as a separate claim.
 - **R4** has one wrong starting condition ("page 2 is selected" at 0 s; the page was 1). The eval does not check starting conditions, so its 6/6 does not cover this. Checking them is the next eval improvement.
 - **Report title for an invisible failure.** In R3 the model titles the report after the claimed symptom. The UI and the Markdown export prefix such titles with "Claimed:" whenever the verdict is not `reproducible`.
+- **Recording from a phone (new input from another person).** iOS screen recordings show no pointer or tap. The model saw the category change to All but not the tap on page 2, so it listed the reset as a user action ("Selects category All") and found no failure. It also returned `not_visible` although the speaker made no claim, and titled the report as if a claim existed. Fixed for the verdict: the validator now rejects `not_visible` without an unsupported claim, so the model is asked again and should answer `needs_clarification`, and such titles are prefixed "Unconfirmed:". All seven final eval runs still pass the stricter validator. Not fixed: telling a tap apart from an app-caused change when no pointer is visible.
 - **Model availability.** `gemini-2.5-flash` and `gemini-2.5-pro` return 404 for new API keys. `gemini-3.8-flash`, `3.7`, `3.6` and `3.5-flash` returned 503 (overloaded) for the whole evening of testing. `gemini-4-argon`, `gemini-4-carbon` and Omni Flash have a free-tier quota of 0. `gemini-4-hydrogen` did answer; see the comparison below for why it is not the default.
 - **No fallback model by default.** An overloaded main model is retried 4 times with backoff. A fallback (`GEMINI_FALLBACK_MODELS`) is opt-in because `gemini-3.1-flash-lite` invented a failure in R3; when one answers, the report shows a warning.
 - **Eval matcher was fixed after the first run.** The first matcher looked for the literal "page 2" and missed "Clicks on page number 2". It now accepts paraphrases via a regular expression. The expected facts themselves did not change, and the first run was re-scored with the new matcher for the comparison below.
@@ -88,7 +89,9 @@ Measured tokens on gemini-3.5-flash-lite: about 4.6–6.5k input (video frames, 
 
 ## Reproducibility check by another person
 
-`TODO: who reproduced it, on which device and browser, which report they used (attach the .md), how long it took, and anything that was unclear.`
+Yevhen Boiko reproduced the defect on the live `/demo` on an iPhone 15 Pro Max in about 5 minutes: he picked a category, searched, changed page and saw the category reset to All. He did this after a short verbal explanation from me, not from a written report alone, so the strict "reproduce using the report" check is only partly done. Next step for it: give someone who has not seen the demo only the R1 report (`.md` export) and the link, without explanation.
+
+He then recorded his own attempt on the phone and uploaded it to the app. The report described his actions correctly, but missed the bug, see "What failed".
 
 ## What I would improve next
 
@@ -96,3 +99,4 @@ Measured tokens on gemini-3.5-flash-lite: about 4.6–6.5k input (video frames, 
 2. **Score starting conditions and claims more strictly** in the eval, and grow the test set beyond four recordings with more variety (other flows, longer clips, a recording where the app should ask for clarification).
 3. **Re-run the comparison on Gemini 3.8 Flash and with more Hydrogen runs** when they are available; the code and eval already support it via `GEMINI_MODEL`.
 4. Save reports with a shareable link, so a reviewer can reproduce from a URL instead of a downloaded file.
+5. **Touch recordings.** Treat a state change with no visible cause right after a tap target (pagination, buttons) as a candidate failure instead of a user action, and ask phone reporters to narrate their taps. Add a phone recording to the test set first.

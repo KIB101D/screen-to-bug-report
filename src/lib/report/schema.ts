@@ -58,6 +58,11 @@ export const ReportSchema = z
       issue('verdict "reproducible" requires a visible observedFailure', ["verdict"]);
     if (r.verdict === "not_visible" && r.observedFailure?.visible)
       issue('verdict "not_visible" contradicts a visible observedFailure', ["verdict"]);
+    if (r.verdict === "not_visible" && !r.claims.some((c) => c.supportedByVideo !== "yes"))
+      issue(
+        'verdict "not_visible" needs a speaker claim that the video does not support; if the speaker claims no failure and none is visible, use "needs_clarification" and say in unknowns what is missing',
+        ["verdict"],
+      );
 
     if (r.expectedBehavior.stated && !r.expectedBehavior.text)
       issue("expectedBehavior.text is required when stated=true", ["expectedBehavior", "text"]);

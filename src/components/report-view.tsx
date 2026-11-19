@@ -24,7 +24,7 @@ const VERDICT: Record<Report["verdict"], { label: string; className: string; hin
   needs_clarification: {
     label: "Needs clarification",
     className: "bg-zinc-200 text-zinc-800",
-    hint: "The recording is not enough to decide.",
+    hint: "No visible failure and no clear claim to check. Ask the reporter what went wrong.",
   },
 };
 
@@ -127,7 +127,11 @@ export function ReportView({
             <span className="text-xs text-zinc-500">{verdict.hint}</span>
           </div>
           <h2 className="text-lg font-semibold">
-            {report.verdict !== "reproducible" && <span className="font-normal text-zinc-500">Claimed: </span>}
+            {report.verdict !== "reproducible" && (
+              <span className="font-normal text-zinc-500">
+                {report.verdict === "not_visible" ? "Claimed: " : "Unconfirmed: "}
+              </span>
+            )}
             {report.title}
           </h2>
           {metrics.primaryModel && metrics.model !== metrics.primaryModel && (
