@@ -2,7 +2,7 @@
 
 ## Links
 
-- Demo: `TODO: Vercel URL` (bug demo at `/demo`, fixed version at `/demo?fixed=1`)
+- Demo: https://screen-to-bug-report.vercel.app (store with the defect at [/demo](https://screen-to-bug-report.vercel.app/demo), fixed version at [/demo?fixed=1](https://screen-to-bug-report.vercel.app/demo?fixed=1))
 - Repository: https://github.com/KIB101D/screen-to-bug-report
 - Walkthrough video: `TODO: link`
 
@@ -31,7 +31,7 @@ Full output: `results/summary-gemini-3.5-flash-lite-high.md` (all seven final ru
 - **R1** lists the expected behaviour but does not record "the category is back to All" as a separate claim.
 - **R4** has one wrong starting condition ("page 2 is selected" at 0 s; the page was 1). The eval does not check starting conditions, so its 6/6 does not cover this. Checking them is the next eval improvement.
 - **Report title for an invisible failure.** In R3 the model titles the report after the claimed symptom. The UI and the Markdown export prefix such titles with "Claimed:" whenever the verdict is not `reproducible`.
-- **Recording from a phone (new input from another person).** iOS screen recordings show no pointer or tap. The model saw the category change to All but not the tap on page 2, so it listed the reset as a user action ("Selects category All") and found no failure. It also returned `not_visible` although the speaker made no claim, and titled the report as if a claim existed. Fixed for the verdict: the validator now rejects `not_visible` without an unsupported claim, so the model is asked again and should answer `needs_clarification`, and such titles are prefixed "Unconfirmed:". All seven final eval runs still pass the stricter validator. Not fixed: telling a tap apart from an app-caused change when no pointer is visible.
+- **Recording from a phone (new input from another person).** iOS screen recordings show no pointer or tap. The model saw the category change to All but not the tap on page 2, so it listed the reset as a user action ("Selects category All") and found no failure. It also returned `not_visible` although the speaker made no claim, and titled the report as if a claim existed. Fixed for the verdict: the validator now rejects `not_visible` without an unsupported claim, the model is asked again and such titles are prefixed "Unconfirmed:". Checked on the live site with the same phone recording: the first answer was rejected, the retry returned `needs_clarification` with "no narration or claim describing a failure" in unknowns; 26.9 s to the report and $0.0062 including the retry (twice the usual cost, since the video is sent again). All seven final eval runs still pass the stricter validator. Not fixed: telling a tap apart from an app-caused change when no pointer is visible.
 - **Model availability.** `gemini-2.5-flash` and `gemini-2.5-pro` return 404 for new API keys. `gemini-3.8-flash`, `3.7`, `3.6` and `3.5-flash` returned 503 (overloaded) for the whole evening of testing. `gemini-4-argon`, `gemini-4-carbon` and Omni Flash have a free-tier quota of 0. `gemini-4-hydrogen` did answer; see the comparison below for why it is not the default.
 - **No fallback model by default.** An overloaded main model is retried 4 times with backoff. A fallback (`GEMINI_FALLBACK_MODELS`) is opt-in because `gemini-3.1-flash-lite` invented a failure in R3; when one answers, the report shows a warning.
 - **Eval matcher was fixed after the first run.** The first matcher looked for the literal "page 2" and missed "Clicks on page number 2". It now accepts paraphrases via a regular expression. The expected facts themselves did not change, and the first run was re-scored with the new matcher for the comparison below.
@@ -84,8 +84,9 @@ Measured tokens on gemini-3.5-flash-lite: about 4.6–6.5k input (video frames, 
 - **Variable cost: $0.0025–0.0030 per recording**, retries included, at paid-tier list prices. Free-tier usage was priced as if paid.
 - Pricing assumptions (Gemini API, standard paid tier, checked 2026-11-17): 3.5 Flash-Lite $0.30 per 1M input tokens for text, image, video and audio, $2.50 per 1M output tokens including thinking. Gemini 4 Hydrogen $1.50 input / $7.50 output (no separate audio rate found, assumed equal to input). 3.1 Flash-Lite $0.25 input / $0.50 audio / $1.50 output (copied from the same page during planning). 3.8 Flash $0.75 / $3.75, a promotional rate until 2026-12-31 that doubles from 2027-01-01.
 - The API reported no separate audio token count for these models, so audio is priced inside the input total. For 3.5 Flash-Lite this changes nothing because audio and video cost the same.
+- Cross-check with Google's published tokenization (about 100 tokens per second of video at low media resolution, about 300 at high): the first low-resolution run used ~2k input tokens for 15-20 s clips, the final high-resolution runs 4.6-6.5k for 15-21 s clips, both in line with the documentation, so the measured token counts are plausible.
 - No other paid intermediaries: frame thumbnails are captured in the browser, speech is understood by the same Gemini call.
-- **Hosting, separate:** Vercel Hobby and Vercel Blob, both on free plans. Recordings are deleted from Blob and from the Gemini Files API right after analysis, so storage stays near zero. Not included in the cost per operation.
+- **Hosting, separate:** Vercel Hobby and a private Vercel Blob store, both on free plans. Recordings are never publicly reachable and are deleted from Blob and from the Gemini Files API right after analysis, so storage stays near zero. Not included in the cost per operation.
 
 ## Reproducibility check by another person
 

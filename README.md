@@ -1,5 +1,7 @@
 # Screen recording → bug report
 
+**Live demo: https://screen-to-bug-report.vercel.app** · demo store with the defect: [/demo](https://screen-to-bug-report.vercel.app/demo) · fixed version: [/demo?fixed=1](https://screen-to-bug-report.vercel.app/demo?fixed=1)
+
 Upload a screen recording of a broken flow (MP4/MOV/WebM, up to 90 s, one browser workflow, optional narration by one speaker) and get a bug report a developer can reproduce:
 
 - starting conditions visible in the recording;
@@ -16,14 +18,17 @@ Upload a screen recording of a broken flow (MP4/MOV/WebM, up to 90 s, one browse
 
 | | This app | Gemini API |
 | --- | --- | --- |
-| Formats | MP4, MOV, WebM (`video/mp4`, `video/quicktime`, `video/webm`) | also MPEG, MPG, WMV, FLV, 3GPP |
-| Length | up to 90 s (scope of the brief) | far longer, depending on the model's context window |
-| Size | up to 100 MB | larger files through the Files API |
+| Formats | MP4, MOV, WebM | `video/mp4`, `video/mpeg`, `video/mov`, `video/avi`, `video/x-flv`, `video/mpg`, `video/webm`, `video/wmv`, `video/3gpp` |
+| Length | up to 90 s (scope of the brief) | up to 1 hour at high media resolution with a 1M-token context |
+| Size | up to 100 MB | Files API: 2 GB per file on the free tier, 20 GB on the paid tier |
 | Audio | used: narration is analysed together with the frames | audio and visual streams are both processed |
+| Sampling | 1 frame per second, high media resolution, static processing | 1 fps by default; fast motion between frames can be missed |
 
-The app accepts only the formats a browser can play, because frames for the report are captured in the browser from the uploaded file; MPEG, WMV, FLV and 3GPP would reach Gemini but could not be shown or scrubbed in the report. macOS and iOS screen recordings (MOV or MP4, H.264 + AAC) work as they are.
+The app accepts only formats a browser can play, because the report's frames are captured in the browser from the uploaded file: AVI, WMV, FLV, MPEG and 3GPP would reach Gemini but could not be shown or scrubbed in the report. macOS and iOS screen recordings (MOV or MP4, H.264 + AAC) work as they are; browsers report MOV as `video/quicktime`, which the Files API accepts.
 
-Sources: Gemini API, [Video understanding](https://ai.google.dev/gemini-api/docs/video-understanding) (video with audio, Files API); Google Cloud, [Video understanding: supported MIME types](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/multimodal/video-understanding) (the same Gemini models on Vertex AI list `video/x-flv`, `video/quicktime`, `video/mpeg`, `video/mpegs`, `video/mpg`, `video/mp4`, `video/webm`, `video/wmv`, `video/3gpp`). Limits in this app are set in `src/lib/config.ts`.
+Why these settings: high media resolution because, per Google, higher resolution improves reading fine text, which is what UI labels are; static processing because Google recommends it for short clips, where the newer agentic mode adds reasoning and tool round-trips. Limits are set in `src/lib/config.ts`.
+
+Source: Gemini API, [Video understanding](https://ai.google.dev/gemini-api/docs/video-understanding) (supported formats, input methods, technical details).
 
 ## Results
 
