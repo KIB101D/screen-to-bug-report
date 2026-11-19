@@ -91,7 +91,14 @@ Measured tokens on gemini-3.5-flash-lite: about 4.6–6.5k input (video frames, 
 
 Yevhen Boiko reproduced the defect on the live `/demo` on an iPhone 15 Pro Max in about 5 minutes: he picked a category, searched, changed page and saw the category reset to All. He did this after a short verbal explanation from me, not from a written report alone, so the strict "reproduce using the report" check is only partly done. Next step for it: give someone who has not seen the demo only the R1 report (`.md` export) and the link, without explanation.
 
-He then recorded his own attempt on the phone and uploaded it to the app. The report described his actions correctly, but missed the bug, see "What failed".
+He then recorded his own attempts and uploaded them to the live app. These are new inputs from another person, with his own scenario and narration; no expected facts were written for them, so they are checked by hand against the video:
+
+| Recording | Device | Narration | Report | Checked against the video | Time | Cost |
+| --- | --- | --- | --- | --- | --- | --- |
+| Phone, 19 s | iPhone 15 Pro Max screen recording | none | `needs_clarification` after one rejected attempt | Actions right, bug missed: the tap on page 2 is not visible, the reset was listed as "Selects category All" | 26.9 s | $0.0062 |
+| Desktop, 21 s | macOS screen recording | Ukrainian | `reproducible`, failure at 0:05.4 with evidence `Category: Electronics → Category: All` | All four steps right (Electronics, page 3, Home, page 2); both spoken claims found and marked supported; expected behaviour correctly not stated | 24.4 s | $0.0034 |
+
+The narration in the desktop recording was Ukrainian; the report quotes it in English. The scope is still one language (English): Ukrainian was not part of the test set, so this is an observation, not a supported feature.
 
 ## What I would improve next
 
