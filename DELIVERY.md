@@ -53,7 +53,7 @@ Gemini 4 Hydrogen was slightly more accurate on R2 (it noticed the narrated cate
 
 ## Time spent
 
-About 4.5 hours of focused work: roughly 3 hours for the demo store, pipeline, report UI and eval script, then about 1.5 hours for recordings, eval runs, model selection and these notes. `TODO: adjust if needed`
+About 5.5 hours of focused work: roughly 3 hours for the demo store, pipeline, report UI and eval script, about 1.5 hours for recordings, eval runs, model selection and these notes, and about 1 hour for the walkthrough video.
 
 ## AI tools and models
 
@@ -90,7 +90,7 @@ Measured tokens on gemini-3.5-flash-lite: about 4.6–6.5k input (video frames, 
 
 ## Reproducibility check by another person
 
-Yevhen Boiko reproduced the defect on the live `/demo` on an iPhone 15 Pro Max in about 5 minutes: he picked a category, searched, changed page and saw the category reset to All. He did this after a short verbal explanation from me, not from a written report alone, so the strict "reproduce using the report" check is only partly done. Next step for it: give someone who has not seen the demo only the R1 report (`.md` export) and the link, without explanation.
+Yevhen reproduced the defect on the live `/demo` on an iPhone 15 Pro Max in about 5 minutes: he picked a category, searched, changed page and saw the category reset to All. He did this after a short verbal explanation from me, not from a written report alone, so the strict "reproduce using the report" check is only partly done. Next step for it: give someone who has not seen the demo only the R1 report (`.md` export) and the link, without explanation.
 
 He then recorded his own attempts and uploaded them to the live app. These are new inputs from another person, with his own scenario and narration; no expected facts were written for them, so they are checked by hand against the video:
 
